@@ -3,6 +3,7 @@
  * 
  */
 
+// TODO: Work on state tree, clean up logic in PlayerController, add in graphic transitions
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,17 +33,19 @@ public class PlayerController : MonoBehaviour {
     private float inhaleHitboxXPos = 0f;
 
     // Saves some of the private variables using the passed in GameObjects
-    void Start()
+    private void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.position.x;
     }
 
-    // Receives the input from the player here
     private void Update()
     {
-        // State Check to make sure player is in the air
         playerGraphics.playerAnimator.SetBool("inAir", VerifyIfAirborn());
+    }
 
+    // Receives the input from the player here
+    private void FixedUpdate()
+    {
         // If the player is inhaling, they cannot move or jump
         if(playerGraphics.playerAnimator.GetBool("isInhaling") == false)
         {
@@ -50,7 +53,11 @@ public class PlayerController : MonoBehaviour {
             HorizontalMovement();
         }
 
-        InhaleExhaleAction();
+        // If the player is not already exhaling, perform the inhale/exhale action
+        if(playerGraphics.playerAnimator.GetBool("isExhaling") == false)
+        {
+            InhaleExhaleAction();
+        }
     }
 
     // Check if player is in the air
@@ -134,7 +141,6 @@ public class PlayerController : MonoBehaviour {
             {
                 // If the player is grounded, they do a standard jump
                 playerRB.AddForce(transform.up * jumpPower);
-                playerGraphics.ChangeSpriteAnimatorState("inAir_jump");
             }
             else
             {
@@ -163,7 +169,7 @@ public class PlayerController : MonoBehaviour {
             if(playerGraphics.playerAnimator.GetBool("isStuffed") == true)
             {
                 Instantiate(exhaleStarPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
-                playerGraphics.ChangeSpriteAnimatorState("normal");
+                playerGraphics.ChangeSpriteAnimatorState("isExhaling");
             }
         }
         else if(Input.GetKey(KeyCode.H))        // Inhale
