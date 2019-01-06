@@ -22,16 +22,25 @@ public class PlayerController : MonoBehaviour {
     public Rigidbody2D playerRB;
     public PlayerGraphics playerGraphics;
 
-    [Header("Children References")]
-    public GameObject inhaleHitbox;
+    [Header("Outside References")]
+    public GameObject inhaleHitboxChild;
+    public GameObject exhaleStarPrefab;
 
     // Private variables
     private float currHorizSpeed = 0f;
     private float horizInput = 0f;
+    private float inhaleHitboxXPos = 0f;
+
+    // Saves some of the private variables using the passed in GameObjects
+    void Start()
+    {
+        inhaleHitboxXPos = inhaleHitboxChild.transform.position.x;
+    }
 
     // Receives the input from the player here
     private void Update()
     {
+        // State Check to make sure player is in the air
         playerGraphics.playerAnimator.SetBool("inAir", VerifyIfAirborn());
 
         // If the player is inhaling, they cannot move or jump
@@ -44,7 +53,7 @@ public class PlayerController : MonoBehaviour {
         InhaleExhaleAction();
     }
 
-    // Check if player is in the  air
+    // Check if player is in the air
     private bool VerifyIfAirborn()
     {
         // We needed to do this check since doubles are a bit finicky with equality checks
@@ -73,7 +82,7 @@ public class PlayerController : MonoBehaviour {
             {
                 playerGraphics.playerSprite.flipX = false;
                 playerRB.MoveRotation(-180f);
-                inhaleHitbox.transform.localPosition = new Vector2(1.28f,0f);
+                inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,0f);
             }
         }
         else if(Input.GetKey(KeyCode.A))
@@ -87,7 +96,7 @@ public class PlayerController : MonoBehaviour {
             {
                 playerGraphics.playerSprite.flipX = true;
                 playerRB.MoveRotation(180f);
-                inhaleHitbox.transform.localPosition = new Vector2(-1.28f,0f);
+                inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,0f);
             }
         }
         else
@@ -125,16 +134,22 @@ public class PlayerController : MonoBehaviour {
             {
                 // If the player is grounded, they do a standard jump
                 playerRB.AddForce(transform.up * jumpPower);
+                playerGraphics.ChangeSpriteAnimatorState("inAir_jump");
             }
             else
             {
-                // If the player is in the air, they can do "mini" jumps
-                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 1.5f));
-
-                // This throttles the height the player gets if they spam the jump button
-                if(playerRB.velocity.y > 0)
+                // The player cannot float if they inhaled something 
+                if(playerGraphics.playerAnimator.GetBool("isStuffed") == false)
                 {
-                    playerRB.AddForce(transform.up * -jumpPower / 2f);
+                    // If the player is in the air, they can do "mini" jumps
+                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 1.5f));
+
+                    // This throttles the height the player gets if they spam the jump button
+                    if(playerRB.velocity.y > 0)
+                    {
+                        playerRB.AddForce(transform.up * -jumpPower / 2f);
+                    }
+                    playerGraphics.ChangeSpriteAnimatorState("inAir_fly");
                 }
             }
         }
@@ -143,27 +158,32 @@ public class PlayerController : MonoBehaviour {
     // Handles the logic for inhaling and exhaling
     private void InhaleExhaleAction()
     {
-        // Inhaling
-        if(Input.GetKey(KeyCode.H))
+        if(Input.GetKeyDown(KeyCode.H))     // Exhale out a projectile if the player inhaled an object
         {
-            if(playerGraphics.playerAnimator.GetBool("isInhaling") == false)
+            if(playerGraphics.playerAnimator.GetBool("isStuffed") == true)
             {
-                playerGraphics.ChangeSpriteAnimatorState("isInhaling");
-                inhaleHitbox.SetActive(true);
-            }
-            else if(playerGraphics.playerAnimator.GetBool("isStuffed") == true)
-            {
-                //TODO: Make this state a Trigger? It is because spitting out something is a temp state
+                Instantiate(exhaleStarPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
                 playerGraphics.ChangeSpriteAnimatorState("normal");
             }
         }
-        else
+        else if(Input.GetKey(KeyCode.H))        // Inhale
         {
-            // Stop inhaling
+            if(playerGraphics.playerAnimator.GetBool("isStuffed") == true)
+            {
+                return;
+            }
+            else if(playerGraphics.playerAnimator.GetBool("isInhaling") == false)
+            {
+                playerGraphics.ChangeSpriteAnimatorState("isInhaling");
+                inhaleHitboxChild.SetActive(true);
+            }
+        }
+        else  // Stop inhaling
+        {
             if(playerGraphics.playerAnimator.GetBool("isInhaling") == true)
             {
                 playerGraphics.ChangeSpriteAnimatorState("normal");
-                inhaleHitbox.SetActive(false);
+                inhaleHitboxChild.SetActive(false);
             }
         }
     }

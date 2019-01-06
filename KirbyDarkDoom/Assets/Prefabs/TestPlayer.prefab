@@ -27,7 +27,7 @@ GameObject:
   - component: {fileID: 114348740542431684}
   m_Layer: 0
   m_Name: TestPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 4735811078743670}
   - component: {fileID: 212482326254515486}
   - component: {fileID: 61285759632191566}
+  - component: {fileID: 114868753932337642}
   m_Layer: 0
   m_Name: Inhale_Sprite
   m_TagString: Untagged
@@ -177,9 +178,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerAnimator: {fileID: 95211422214438054}
   playerSprite: {fileID: 212156262353481102}
-  player_normal: {fileID: 21300000, guid: 9aa94d7b22f6e4dbd928b6e6b85b60af, type: 3}
+  player_normal: {fileID: 21300000, guid: 2a3f4d35516764bb69e15e95060ca8f1, type: 3}
   player_inhale: {fileID: 21300000, guid: a3452e033f7004e94a1234b12627c711, type: 3}
   player_stuffed: {fileID: 21300000, guid: 8882ba418579042dcaee9934c7d54dd4, type: 3}
+  player_exhale: {fileID: 21300000, guid: 3d3aeeae828a9466b9b94177dad961be, type: 3}
+  player_jump: {fileID: 21300000, guid: 655ed3085fe20457694a2b59af7ce5a1, type: 3}
+  player_fly: {fileID: 21300000, guid: 4089c4b5b39cf4a47966f65857102c83, type: 3}
 --- !u!114 &114461392090596268
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -197,7 +201,22 @@ MonoBehaviour:
   lerpValue: 0.5
   playerRB: {fileID: 50819204955772002}
   playerGraphics: {fileID: 114348740542431684}
-  inhaleHitbox: {fileID: 1958170377110874}
+  inhaleHitboxChild: {fileID: 1958170377110874}
+  exhaleStarPrefab: {fileID: 1039827959546552, guid: 6376ff207ffbc4a0d8bb94cb12898cd6,
+    type: 2}
+--- !u!114 &114868753932337642
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1958170377110874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62b1a1dae022b4d99b9e556241a022e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerRB: {fileID: 50819204955772002}
+  playerController: {fileID: 114461392090596268}
 --- !u!212 &212156262353481102
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -241,7 +260,7 @@ SpriteRenderer:
   m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!212 &212482326254515486
@@ -280,7 +299,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9b170821e8499411caa3f5b9c802c41b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.1254902}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
