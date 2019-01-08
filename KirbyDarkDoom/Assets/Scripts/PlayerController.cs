@@ -14,9 +14,18 @@ public class PlayerController : MonoBehaviour {
     public float horizAcceletation = 1f;
     public float horizMaxSpeed = 10f;
     public float jumpPower = 700f;
-
+    [Range(0.1f, 2f)]
+    public float flyModifer = 1.5f;
     [Range(0.1f,1f)]
     public float lerpValue = 0.1f;
+
+    [Header("States")]
+    public bool isInAir = false;
+    public bool isJumping = false;
+    public bool isFlying = false;
+    public bool isInhaling = false;
+    public bool isStuffed = false;
+    public bool isExhaling = false;
 
     [Header("Component References")]
     public Rigidbody2D playerRB;
@@ -29,28 +38,118 @@ public class PlayerController : MonoBehaviour {
     // Private variables
     private float currHorizSpeed = 0f;
     private float horizInput = 0f;
+    private float jumpInput = 0f;
     private float inhaleHitboxXPos = 0f;
+    private bool canExhale = true;
 
     // Saves some of the private variables using the passed in GameObjects
     void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.position.x;
+
+        // If the player starts out in the air, we set the state of jumping to be true
+        if(VerifyIfAirborn())
+        {
+            isJumping = true;
+        }
     }
 
     // Receives the input from the player here
     private void Update()
     {
-        // State Check to make sure player is in the air
-        playerGraphics.playerAnimator.SetBool("inAir", VerifyIfAirborn());
+        // Graphics Check
+        GraphicUpdate();
 
-        // If the player is inhaling, they cannot move or jump
-        if(playerGraphics.playerAnimator.GetBool("isInhaling") == false)
+        // Checks if the player just landed on the ground
+        if(isInAir == true && VerifyIfAirborn() == false)
         {
-            JumpMovement();
-            HorizontalMovement();
+            isJumping = false;
+            isFlying = false;
         }
+        isInAir = VerifyIfAirborn();
 
-        InhaleExhaleAction();
+        // If the player is exhaling, they cannot do any actions
+        if(isExhaling == false)
+        {
+            // If the player is inhaling, they cannot move or jump
+            if(isInhaling == false)
+            {
+                JumpMovement();
+                HorizontalMovement();
+            }
+            InhaleExhaleAction();
+        }
+    }
+
+    // Handles the movement for the player
+    private void FixedUpdate()
+    {
+        // The player will only move if they are neither exhaling or inhaling
+        if(isExhaling == false && isInhaling == false)
+        {
+            // Horizontal movement
+            playerRB.AddForce(transform.right * currHorizSpeed);
+
+            // Jumping and Flying
+            if(isFlying == true)
+            {
+                // If the player is in the air, they can do "mini" jumps
+                // This throttles the height the player gets if they spam the jump button
+                if(playerRB.velocity.y < 0)
+                {
+                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * (jumpPower * jumpInput), jumpPower / flyModifer));
+                }
+            }
+            else if(isJumping == true)
+            {
+                // Normal jumping
+                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * (jumpPower * jumpInput), jumpPower));
+            }
+        }
+    }
+
+	// Updates the player's graphic according
+	private void GraphicUpdate()
+    {
+        // If the player is stuffed, exhaling, or inhaling, their sprite will not be updated
+        if(isStuffed == false && isExhaling == false && isInhaling == false)
+        {
+            // Checks if the player just landed on the ground
+            if(isInAir == true && VerifyIfAirborn() == false)
+            {
+                playerGraphics.ChangeSprite("isLanding");
+            }
+            else if(isInhaling == false)
+            {
+                if(isInAir == false)
+                {
+                    // Is the player moving?
+                    if(horizInput < -0.1f || horizInput > 0.1f)
+                    {
+                        playerGraphics.ChangeSprite("isMoving");
+                    }
+                    else
+                    {
+                        playerGraphics.ChangeSprite("isIdle");
+                    } 
+                }
+                else
+                {
+                    if(isFlying == true)
+                    {
+                        playerGraphics.ChangeSprite("isFlying");
+                    }
+                    else if(isJumping == true)
+                    {
+                        playerGraphics.ChangeSprite("isJumping");
+                    }
+                    else
+                    {
+                        playerGraphics.ChangeSprite("isJumping");
+                    }
+                }
+            }
+        }
     }
 
     // Check if player is in the air
@@ -113,7 +212,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         // If the player is in the air, horizontal movement is halved
-        if(playerGraphics.playerAnimator.GetBool("inAir") == false)
+        if(isInAir == false)
         {
             currHorizSpeed = horizInput * horizAcceletation;
         }
@@ -121,8 +220,6 @@ public class PlayerController : MonoBehaviour {
         {
             currHorizSpeed = (horizInput * horizAcceletation) / 2f;
         }
-
-        playerRB.AddForce(transform.right * currHorizSpeed);
     }
 
     // Handles the logic of how the player can jump and 'puff' in the air
@@ -130,61 +227,89 @@ public class PlayerController : MonoBehaviour {
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            if(playerGraphics.playerAnimator.GetBool("inAir") == false)
+            if(isInAir == false)
             {
                 // If the player is grounded, they do a standard jump
-                playerRB.AddForce(transform.up * jumpPower);
-                playerGraphics.ChangeSpriteAnimatorState("inAir_jump");
+                isJumping = true;
+                jumpInput = 1f;
             }
             else
             {
-                // The player cannot float if they inhaled something 
-                if(playerGraphics.playerAnimator.GetBool("isStuffed") == false)
+                // The player cannot fly if they inhaled something 
+                if(isStuffed == false)
                 {
-                    // If the player is in the air, they can do "mini" jumps
-                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 1.5f));
-
-                    // This throttles the height the player gets if they spam the jump button
-                    if(playerRB.velocity.y > 0)
-                    {
-                        playerRB.AddForce(transform.up * -jumpPower / 2f);
-                    }
-                    playerGraphics.ChangeSpriteAnimatorState("inAir_fly");
+                    isJumping = false;
+                    isFlying = true;
+                    jumpInput = 1f;
+                }
+                else
+                {
+                    jumpInput = 0f;
                 }
             }
+        }
+        else
+        {
+            jumpInput = 0f;
         }
     }
 
     // Handles the logic for inhaling and exhaling
     private void InhaleExhaleAction()
     {
-        if(Input.GetKeyDown(KeyCode.H))     // Exhale out a projectile if the player inhaled an object
+        if(Input.GetKeyDown(KeyCode.H))
         {
-            if(playerGraphics.playerAnimator.GetBool("isStuffed") == true)
+            // Exhale out a projectile if the player inhaled an object
+            // This action is only allowed once canExhale is true
+            if(isStuffed == true && canExhale == true)
             {
                 Instantiate(exhaleStarPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
-                playerGraphics.ChangeSpriteAnimatorState("normal");
+                playerGraphics.ChangeSprite("isExhaling");
+                isStuffed = false;
+                isExhaling = true;
+                Invoke("ResetExhaleState", 0.5f);
             }
         }
-        else if(Input.GetKey(KeyCode.H))        // Inhale
+        else if(Input.GetKey(KeyCode.H))
         {
-            if(playerGraphics.playerAnimator.GetBool("isStuffed") == true)
+            // This occurs immediatly as soon as the player inhaled an enemy
+            if(isStuffed == true)
             {
+                // We prevent the player from immediatly activating the exhale
+                canExhale = false;
+                Invoke("EnableExhale", 0.5f);
                 return;
             }
-            else if(playerGraphics.playerAnimator.GetBool("isInhaling") == false)
+            else if(isInhaling == false)
             {
-                playerGraphics.ChangeSpriteAnimatorState("isInhaling");
+                // Activates the inhale
+                playerGraphics.ChangeSprite("isInhaling");
                 inhaleHitboxChild.SetActive(true);
+                isInhaling = true;
             }
         }
-        else  // Stop inhaling
+        else
         {
-            if(playerGraphics.playerAnimator.GetBool("isInhaling") == true)
+            // Stop inhaling
+            if(isInhaling == true)
             {
-                playerGraphics.ChangeSpriteAnimatorState("normal");
+                playerGraphics.ChangeSprite("isIdle");
                 inhaleHitboxChild.SetActive(false);
+                isInhaling = false;
             }
         }
+    }
+
+    // Resets the graphic and state for exhaling
+    private void ResetExhaleState()
+    {
+        isExhaling = false;
+        playerGraphics.ChangeSprite("isIdle");
+    }
+
+    // Enables the exhale interaction
+    private void EnableExhale()
+    {
+        canExhale = true;
     }
 }

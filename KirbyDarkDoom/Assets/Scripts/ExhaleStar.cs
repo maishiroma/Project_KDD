@@ -24,7 +24,7 @@ public class ExhaleStar : MonoBehaviour {
     }
 
     // The star will continuously move in a given direction
-    private void Update()
+    private void FixedUpdate()
     {
         starRB.AddForce(Vector2.right * moveSpeed);
     }
