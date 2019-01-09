@@ -35,10 +35,12 @@ public class InhaleHitbox : MonoBehaviour {
             // If the enemy is close to the player while they are being inhaled, they will make the player stuffed
             if(Vector2.Distance(playerRB.position, newPos) <= 1f)
             {
-                playerController.playerGraphics.ChangeSpriteAnimatorState("isStuffed");
+                playerController.playerGraphics.ChangeSprite("isStuffed");
                 objectToBeInhaled.gameObject.SetActive(false);
                 objectToBeInhaled = null;
                 gameObject.SetActive(false);
+                playerController.isStuffed = true;
+                playerController.isInhaling = false;
             }
             else
             {
