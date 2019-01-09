@@ -14,12 +14,15 @@ public class PlayerController : MonoBehaviour {
     public float horizAcceletation = 1f;
     public float horizMaxSpeed = 10f;
     public float jumpPower = 700f;
+    public float duckOffset = -0.22f;
+    public float duckHeight = 0.5f;
     [Range(0.1f, 2f)]
     public float flyModifer = 1.5f;
     [Range(0.1f,1f)]
     public float lerpValue = 0.1f;
 
     [Header("States")]
+    public bool isDucking = false;
     public bool isInAir = false;
     public bool isJumping = false;
     public bool isFlying = false;
@@ -28,6 +31,7 @@ public class PlayerController : MonoBehaviour {
     public bool isExhaling = false;
 
     [Header("Component References")]
+    public BoxCollider2D playerCollider;
     public Rigidbody2D playerRB;
     public PlayerGraphics playerGraphics;
 
@@ -40,12 +44,14 @@ public class PlayerController : MonoBehaviour {
     private float horizInput = 0f;
     private float jumpInput = 0f;
     private float inhaleHitboxXPos = 0f;
+    private float origPlayerHeight = 0f;
     private bool canExhale = true;
 
     // Saves some of the private variables using the passed in GameObjects
     void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.position.x;
+        origPlayerHeight = playerCollider.size.y;
 
         // If the player starts out in the air, we set the state of jumping to be true
         if(VerifyIfAirborn())
@@ -71,11 +77,15 @@ public class PlayerController : MonoBehaviour {
         // If the player is exhaling, they cannot do any actions
         if(isExhaling == false)
         {
-            // If the player is inhaling, they cannot move or jump
+            // If the player is inhaling or ducking, they cannot move or jump
             if(isInhaling == false)
             {
-                JumpMovement();
-                HorizontalMovement();
+                if(isDucking == false)
+                {
+                    JumpMovement();
+                    HorizontalMovement();
+                }
+                Ducking();
             }
             InhaleExhaleAction();
         }
@@ -85,7 +95,7 @@ public class PlayerController : MonoBehaviour {
     private void FixedUpdate()
     {
         // The player will only move if they are neither exhaling or inhaling
-        if(isExhaling == false && isInhaling == false)
+        if(isExhaling == false && isInhaling == false && isDucking == false)
         {
             // Horizontal movement
             playerRB.AddForce(transform.right * currHorizSpeed);
@@ -114,39 +124,36 @@ public class PlayerController : MonoBehaviour {
         // If the player is stuffed, exhaling, or inhaling, their sprite will not be updated
         if(isStuffed == false && isExhaling == false && isInhaling == false)
         {
-            // Checks if the player just landed on the ground
-            if(isInAir == true && VerifyIfAirborn() == false)
+            if(isInAir == false)
             {
-                playerGraphics.ChangeSprite("isLanding");
-            }
-            else if(isInhaling == false)
-            {
-                if(isInAir == false)
+                // Is the player ducking?
+                if(isDucking == true)
                 {
-                    // Is the player moving?
-                    if(horizInput < -0.1f || horizInput > 0.1f)
-                    {
-                        playerGraphics.ChangeSprite("isMoving");
-                    }
-                    else
-                    {
-                        playerGraphics.ChangeSprite("isIdle");
-                    } 
+                    playerGraphics.ChangeSprite("isDucking");
+                }
+                // Is the player moving?
+                else if(horizInput < -0.1f || horizInput > 0.1f)
+                {
+                    playerGraphics.ChangeSprite("isMoving");
                 }
                 else
                 {
-                    if(isFlying == true)
-                    {
-                        playerGraphics.ChangeSprite("isFlying");
-                    }
-                    else if(isJumping == true)
-                    {
-                        playerGraphics.ChangeSprite("isJumping");
-                    }
-                    else
-                    {
-                        playerGraphics.ChangeSprite("isJumping");
-                    }
+                    playerGraphics.ChangeSprite("isIdle");
+                } 
+            }
+            else
+            {
+                if(isFlying == true)
+                {
+                    playerGraphics.ChangeSprite("isFlying");
+                }
+                else if(isJumping == true)
+                {
+                    playerGraphics.ChangeSprite("isJumping");
+                }
+                else
+                {
+                    playerGraphics.ChangeSprite("isJumping");
                 }
             }
         }
@@ -222,6 +229,33 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    // The player ducks. 
+    // If they have something in their mouth, it dissapears (for now)
+    private void Ducking()
+    {
+        if(Input.GetKey(KeyCode.S))
+        {
+            if(isDucking == false)
+            {
+                playerCollider.size = new Vector2(1,duckHeight);
+                playerCollider.offset = new Vector2(0,duckOffset);
+                isDucking = true;
+                isStuffed = false;
+                canExhale = true;
+            }
+
+        }
+        else
+        {
+            if(isDucking == true)
+            {
+                playerCollider.size = new Vector2(1,origPlayerHeight);
+                playerCollider.offset = new Vector2(0,0);
+                isDucking = false;
+            }
+        }
+    }
+
     // Handles the logic of how the player can jump and 'puff' in the air
     private void JumpMovement()
     {
@@ -267,7 +301,7 @@ public class PlayerController : MonoBehaviour {
                 playerGraphics.ChangeSprite("isExhaling");
                 isStuffed = false;
                 isExhaling = true;
-                Invoke("ResetExhaleState", 0.5f);
+                Invoke("ResetExhaleState", 0.3f);
             }
         }
         else if(Input.GetKey(KeyCode.H))
@@ -277,7 +311,7 @@ public class PlayerController : MonoBehaviour {
             {
                 // We prevent the player from immediatly activating the exhale
                 canExhale = false;
-                Invoke("EnableExhale", 0.5f);
+                Invoke("EnableExhale", 0.1f);
                 return;
             }
             else if(isInhaling == false)

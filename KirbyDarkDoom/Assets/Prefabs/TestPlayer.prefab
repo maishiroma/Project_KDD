@@ -69,7 +69,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1911324619482096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.84, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4735811078743670}
@@ -180,14 +180,18 @@ MonoBehaviour:
   horizAcceletation: 2
   horizMaxSpeed: 8
   jumpPower: 700
+  duckOffset: -0.16
+  duckHeight: 0.67
   flyModifer: 1.2
   lerpValue: 0.3
+  isDucking: 0
   isInAir: 0
   isJumping: 0
   isFlying: 0
   isInhaling: 0
   isStuffed: 0
   isExhaling: 0
+  playerCollider: {fileID: 61009220270228268}
   playerRB: {fileID: 50819204955772002}
   playerGraphics: {fileID: 114348740542431684}
   inhaleHitboxChild: {fileID: 1958170377110874}

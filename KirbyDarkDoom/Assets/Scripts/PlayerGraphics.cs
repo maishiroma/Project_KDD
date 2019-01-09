@@ -29,6 +29,9 @@ public class PlayerGraphics : MonoBehaviour {
             case "isIdle":  // Idle on the ground
                 playerSprite.sprite = player_idle;
                 break;
+            case "isDucking":    // Ducking on the ground
+                playerSprite.sprite = player_land;
+                break;
             case "isMoving":    // Moving on the ground
                 playerSprite.sprite = player_move;
                 break;
