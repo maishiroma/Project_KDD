@@ -14,11 +14,13 @@ public class PlayerGraphics : MonoBehaviour {
     [Header("Sprite List")]
     public Sprite player_idle;
     public Sprite player_move;
+    public Sprite player_ducking;
     public Sprite player_inhale;
     public Sprite player_stuffed;
     public Sprite player_exhale;
     public Sprite player_jump;
     public Sprite player_fly;
+    public Sprite player_airborn;
     public Sprite player_land;
 
     // Changes the sprite to whatever action is passed into here.
@@ -30,7 +32,7 @@ public class PlayerGraphics : MonoBehaviour {
                 playerSprite.sprite = player_idle;
                 break;
             case "isDucking":    // Ducking on the ground
-                playerSprite.sprite = player_land;
+                playerSprite.sprite = player_ducking;
                 break;
             case "isMoving":    // Moving on the ground
                 playerSprite.sprite = player_move;
@@ -49,6 +51,9 @@ public class PlayerGraphics : MonoBehaviour {
                 break;
             case "isFlying":   // When the player is flying
                 playerSprite.sprite = player_fly;
+                break;
+            case "isAirborn":   // When the player is in the air not jumping or flying
+                playerSprite.sprite = player_airborn;
                 break;
             case "isLanding":  // landed on the ground
                 playerSprite.sprite = player_land;

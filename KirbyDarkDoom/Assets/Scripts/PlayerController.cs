@@ -11,15 +11,14 @@ public class PlayerController : MonoBehaviour {
 
     // Public Variables
     [Header("General Variables")]
-    public float horizAcceletation = 1f;
-    public float horizMaxSpeed = 10f;
-    public float jumpPower = 700f;
+    public float moveSpeed = 20f;
+    public float jumpPower = 60f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
     [Range(0.1f, 2f)]
     public float flyModifer = 1.5f;
     [Range(0.1f,1f)]
-    public float lerpValue = 0.1f;
+    public float jumpFlyLength = 0.3f;
 
     [Header("States")]
     public bool isDucking = false;
@@ -54,7 +53,7 @@ public class PlayerController : MonoBehaviour {
         origPlayerHeight = playerCollider.size.y;
 
         // If the player starts out in the air, we set the state of jumping to be true
-        if(VerifyIfAirborn())
+        if(floatEquality(playerRB.velocity.y, 0) == true)
         {
             isJumping = true;
         }
@@ -67,12 +66,12 @@ public class PlayerController : MonoBehaviour {
         GraphicUpdate();
 
         // Checks if the player just landed on the ground
-        if(isInAir == true && VerifyIfAirborn() == false)
+        if(isInAir == true && floatEquality(playerRB.velocity.y, 0) == false)
         {
             isJumping = false;
             isFlying = false;
         }
-        isInAir = VerifyIfAirborn();
+        isInAir = floatEquality(playerRB.velocity.y, 0);
 
         // If the player is exhaling, they cannot do any actions
         if(isExhaling == false)
@@ -98,22 +97,18 @@ public class PlayerController : MonoBehaviour {
         if(isExhaling == false && isInhaling == false && isDucking == false)
         {
             // Horizontal movement
-            playerRB.AddForce(transform.right * currHorizSpeed);
+            playerRB.AddForce(transform.right * horizInput);
 
             // Jumping and Flying
             if(isFlying == true)
             {
                 // If the player is in the air, they can do "mini" jumps
-                // This throttles the height the player gets if they spam the jump button
-                if(playerRB.velocity.y < 0)
-                {
-                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * (jumpPower * jumpInput), jumpPower / flyModifer));
-                }
+                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / flyModifer));
             }
             else if(isJumping == true)
             {
                 // Normal jumping
-                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * (jumpPower * jumpInput), jumpPower));
+                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower));
             }
         }
     }
@@ -153,79 +148,37 @@ public class PlayerController : MonoBehaviour {
                 }
                 else
                 {
-                    playerGraphics.ChangeSprite("isJumping");
+                    playerGraphics.ChangeSprite("isAirborn");
                 }
             }
         }
     }
 
-    // Check if player is in the air
-    private bool VerifyIfAirborn()
-    {
-        // We needed to do this check since doubles are a bit finicky with equality checks
-        if(Mathf.Abs(playerRB.velocity.y - 0) < 0.00001f)
-        {
-            return false;
-        }
-        else
-        {
-            return true;   
-        }
-
-    }
-
     // Handles moving left and right for the player
     private void HorizontalMovement()
     {
-        if(Input.GetKey(KeyCode.D))
+        if(isInAir == true)
         {
-            // If the player is moving right
-            horizInput += Mathf.Lerp(0, horizMaxSpeed, lerpValue);
-            horizInput = Mathf.Clamp(horizInput, 0f, horizMaxSpeed);
+            horizInput = Input.GetAxis("Horizontal") * (moveSpeed / 3f);
+        }
+        else
+        {
+            horizInput = Input.GetAxis("Horizontal") * moveSpeed;
+        }
 
+        if(horizInput < 0)
+        {
             // Rotates the player to face right
-            if(playerRB.rotation >= 0)
-            {
-                playerGraphics.playerSprite.flipX = false;
-                playerRB.MoveRotation(-180f);
-                inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,0f);
-            }
+            playerGraphics.playerSprite.flipX = true;
+            playerRB.MoveRotation(180f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,0f);
         }
-        else if(Input.GetKey(KeyCode.A))
+        else if(horizInput > 0)
         {
-            // If the player is moving left
-            horizInput += Mathf.Lerp(0, -horizMaxSpeed, lerpValue);
-            horizInput = Mathf.Clamp(horizInput, -horizMaxSpeed, 0f);
-
             // Rotates the player to face left
-            if(playerRB.rotation <= 0)
-            {
-                playerGraphics.playerSprite.flipX = true;
-                playerRB.MoveRotation(180f);
-                inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,0f);
-            }
-        }
-        else
-        {
-            // If the player is standing still
-            if(horizInput < -0.1f || horizInput > 0.1f)
-            {
-                horizInput = Mathf.Lerp(horizInput, 0f, lerpValue);
-            }
-            else
-            {
-                horizInput = 0f;
-            }
-        }
-
-        // If the player is in the air, horizontal movement is halved
-        if(isInAir == false)
-        {
-            currHorizSpeed = horizInput * horizAcceletation;
-        }
-        else
-        {
-            currHorizSpeed = (horizInput * horizAcceletation) / 2f;
+            playerGraphics.playerSprite.flipX = false;
+            playerRB.MoveRotation(-180f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,0f);
         }
     }
 
@@ -243,7 +196,6 @@ public class PlayerController : MonoBehaviour {
                 isStuffed = false;
                 canExhale = true;
             }
-
         }
         else
         {
@@ -265,7 +217,12 @@ public class PlayerController : MonoBehaviour {
             {
                 // If the player is grounded, they do a standard jump
                 isJumping = true;
-                jumpInput = 1f;
+
+                // This is done so that the player will stop moving upward after X seconds
+                if(IsInvoking("StopJumpFlyVertical") == false)
+                {
+                    Invoke("StopJumpFlyVertical", jumpFlyLength);
+                }
             }
             else
             {
@@ -274,17 +231,14 @@ public class PlayerController : MonoBehaviour {
                 {
                     isJumping = false;
                     isFlying = true;
-                    jumpInput = 1f;
-                }
-                else
-                {
-                    jumpInput = 0f;
+
+                    // This is done so that the player will stop moving upward after X seconds
+                    if(IsInvoking("StopJumpFlyVertical") == false)
+                    {
+                        Invoke("StopJumpFlyVertical", jumpFlyLength);
+                    }
                 }
             }
-        }
-        else
-        {
-            jumpInput = 0f;
         }
     }
 
@@ -334,6 +288,20 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    // Handles checking if two floats are equal
+    // Returns false if they aren't equal
+    private bool floatEquality(float f1, float f2)
+    {
+        if(Mathf.Abs(f1 - f2) < 0.00001f)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     // Resets the graphic and state for exhaling
     private void ResetExhaleState()
     {
@@ -345,5 +313,12 @@ public class PlayerController : MonoBehaviour {
     private void EnableExhale()
     {
         canExhale = true;
+    }
+
+    // Called in an Invoke to reset the player from moving upward
+    private void StopJumpFlyVertical()
+    {
+        isJumping = false;
+        isFlying = false;
     }
 }
