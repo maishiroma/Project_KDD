@@ -160,11 +160,13 @@ MonoBehaviour:
   playerSprite: {fileID: 212156262353481102}
   player_idle: {fileID: 21300000, guid: 2a3f4d35516764bb69e15e95060ca8f1, type: 3}
   player_move: {fileID: 21300000, guid: df3a21653446844b69bb1fa30d71dc02, type: 3}
+  player_ducking: {fileID: 21300000, guid: 23ecc002b6aa3439c8918c55517ec473, type: 3}
   player_inhale: {fileID: 21300000, guid: a3452e033f7004e94a1234b12627c711, type: 3}
   player_stuffed: {fileID: 21300000, guid: 8882ba418579042dcaee9934c7d54dd4, type: 3}
   player_exhale: {fileID: 21300000, guid: 3d3aeeae828a9466b9b94177dad961be, type: 3}
-  player_jump: {fileID: 21300000, guid: 655ed3085fe20457694a2b59af7ce5a1, type: 3}
+  player_jump: {fileID: 21300000, guid: f101086a51aee469dac4c3f65e8042e1, type: 3}
   player_fly: {fileID: 21300000, guid: 4089c4b5b39cf4a47966f65857102c83, type: 3}
+  player_airborn: {fileID: 21300000, guid: 655ed3085fe20457694a2b59af7ce5a1, type: 3}
   player_land: {fileID: 21300000, guid: 23ecc002b6aa3439c8918c55517ec473, type: 3}
 --- !u!114 &114461392090596268
 MonoBehaviour:
@@ -177,13 +179,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 085d6ee73a9ad4021bea8891f3558722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  horizAcceletation: 2
-  horizMaxSpeed: 8
-  jumpPower: 700
+  moveSpeed: 20
+  jumpPower: 60
   duckOffset: -0.16
   duckHeight: 0.67
   flyModifer: 1.2
-  lerpValue: 0.3
+  jumpFlyLength: 0.3
   isDucking: 0
   isInAir: 0
   isJumping: 0
