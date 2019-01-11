@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 50819204955772002}
   - component: {fileID: 114461392090596268}
   - component: {fileID: 114348740542431684}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: TestPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 212482326254515486}
   - component: {fileID: 61285759632191566}
   - component: {fileID: 114868753932337642}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Inhale_Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,6 +166,7 @@ MonoBehaviour:
   player_exhale: {fileID: 21300000, guid: 3d3aeeae828a9466b9b94177dad961be, type: 3}
   player_jump: {fileID: 21300000, guid: f101086a51aee469dac4c3f65e8042e1, type: 3}
   player_fly: {fileID: 21300000, guid: 4089c4b5b39cf4a47966f65857102c83, type: 3}
+  player_airpuffed: {fileID: 21300000, guid: 8c7705a6c4b3a4f5da2d8293e5a8d617, type: 3}
   player_airborn: {fileID: 21300000, guid: 655ed3085fe20457694a2b59af7ce5a1, type: 3}
   player_land: {fileID: 21300000, guid: 23ecc002b6aa3439c8918c55517ec473, type: 3}
 --- !u!114 &114461392090596268
@@ -181,10 +182,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 20
   jumpPower: 60
+  flyingGravity: 1
   duckOffset: -0.16
   duckHeight: 0.67
-  flyModifer: 1.2
-  jumpFlyLength: 0.3
+  flyHeightModifier: 2
+  verticalGainDuration: 0.3
+  isFacingRight: 1
   isDucking: 0
   isInAir: 0
   isJumping: 0
@@ -197,6 +200,8 @@ MonoBehaviour:
   playerGraphics: {fileID: 114348740542431684}
   inhaleHitboxChild: {fileID: 1958170377110874}
   exhaleStarPrefab: {fileID: 1039827959546552, guid: 6376ff207ffbc4a0d8bb94cb12898cd6,
+    type: 2}
+  airPuffPrefab: {fileID: 1329250706767704, guid: 6499e74ce7c01458ca124f28b5efb9e8,
     type: 2}
 --- !u!114 &114868753932337642
 MonoBehaviour:

@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExhaleStar : MonoBehaviour {
+public class ExhaleProjectile : MonoBehaviour {
 
 	[Header("General Variables")]
     public float moveSpeed;
@@ -14,19 +14,19 @@ public class ExhaleStar : MonoBehaviour {
     public float damagePower;
 
     [Header("External References")]
-    public Rigidbody2D starRB;
+    public Rigidbody2D projectileRB;
 
     // Upon creating, the star will have a set TTL and a specified move direction
     private void Start()
     {
-        Invoke("DestroyStar", timeToLive);
+        Invoke("DestroyProjectile", timeToLive);
         moveSpeed *= Mathf.Sign(transform.localPosition.x);
     }
 
     // The star will continuously move in a given direction
     private void FixedUpdate()
     {
-        starRB.AddForce(Vector2.right * moveSpeed);
+        projectileRB.AddForce(Vector2.right * moveSpeed);
     }
 
     // If the star hits an enemy or wall, it will dissapear
@@ -34,7 +34,7 @@ public class ExhaleStar : MonoBehaviour {
 	{
         if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
         {
-            DestroyStar();
+            DestroyProjectile();
         }
         else if(collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
         {
@@ -42,13 +42,13 @@ public class ExhaleStar : MonoBehaviour {
             {
                 // The enemy is defeated!
                 collision.gameObject.SetActive(false);
-                DestroyStar();
+                DestroyProjectile();
             }
         }
 	}
 
     // Invoked to destroy the star if it is still around
-	private void DestroyStar()
+    private void DestroyProjectile()
     {
         if(gameObject != null)
         {
