@@ -1,6 +1,6 @@
 ﻿/*  This script handles the player movement. WIP
- * 
- * 
+ *
+ *
  */
 
 using System.Collections;
@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour {
     public GameObject inhaleHitboxChild;
     public GameObject exhaleStarPrefab;
     public GameObject airPuffPrefab;
+    public Transform[] groundCheckers = new Transform[3];
 
     // Private variables
     private float origGravity = 0f;
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour {
         origGravity = playerRB.gravityScale;
 
         // If the player starts out in the air, we set the state of jumping to be true
-        if(Physics2D.Raycast(playerRB.position, -Vector3.up, 1f) == false)
+        if(CheckGrounded() == false)
         {
             isInAir = true;
         }
@@ -116,10 +117,10 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    // Handles checking if the player is grounded
+    // Checks if the player is grounded
 	private void OnCollisionStay2D(Collision2D collision)
 	{
-        if(collision.gameObject.tag == "Ground" && isInAir == true && Physics2D.Raycast(playerRB.position, -Vector3.up, 1f))
+        if(CheckGrounded() == true  && isInAir == true)
         {
             isJumping = false;
             isInAir = false;
@@ -139,10 +140,10 @@ public class PlayerController : MonoBehaviour {
         }
 	}
 
-    // Checks if the player is airborn
+    // Checks to see if the player is airborn
 	private void OnCollisionExit2D(Collision2D collision)
 	{
-        if(collision.gameObject.tag == "Ground" && isInAir == false)
+        if(CheckGrounded() == false && isInAir == false)
         {
             isInAir = true;
         }
@@ -164,14 +165,14 @@ public class PlayerController : MonoBehaviour {
                     playerGraphics.ChangeSprite("isDucking");
                 }
                 // Is the player moving?
-                else if(horizInput < -0.1f || horizInput > 0.1f)
+                else if(playerRB.velocity.x < -0.1f || playerRB.velocity.x > 0.1f)
                 {
                     playerGraphics.ChangeSprite("isMoving");
                 }
                 else
                 {
                     playerGraphics.ChangeSprite("isIdle");
-                } 
+                }
             }
             else
             {
@@ -196,7 +197,7 @@ public class PlayerController : MonoBehaviour {
     {
         if(isInAir == true)
         {
-            horizInput = Input.GetAxis("Horizontal") * (moveSpeed / 3f);
+            horizInput = Input.GetAxis("Horizontal") * (moveSpeed / 4f);
         }
         else
         {
@@ -266,7 +267,7 @@ public class PlayerController : MonoBehaviour {
             }
             else
             {
-                // The player cannot fly if they inhaled something 
+                // The player cannot fly if they inhaled something
                 if(isStuffed == false)
                 {
                     isJumping = false;
@@ -396,5 +397,28 @@ public class PlayerController : MonoBehaviour {
         {
             return true;
         }
+    }
+
+    // Checks if the player is grounded properly
+    private bool CheckGrounded()
+    {
+        // If the player is jumping, we are not going to check if they are grounded because they WILL NOT be grounded during that
+        if(isJumping == false)
+        {
+             // We just need to check if at least one of these checks are valid.
+            for(int i = 0; i < 3; ++i)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(groundCheckers[i].position, -Vector2.up, 0.1f);
+                if(hit == true)
+                {
+                    if(hit.collider.gameObject.tag == "Ground" && hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
     }
 }
