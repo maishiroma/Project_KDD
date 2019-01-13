@@ -1,6 +1,6 @@
 ﻿/*  This script handles the player movement. WIP
- * 
- * 
+ *
+ *
  */
 
 using System.Collections;
@@ -13,14 +13,16 @@ public class PlayerController : MonoBehaviour {
     [Header("General Variables")]
     public float moveSpeed = 20f;
     public float jumpPower = 60f;
+    public float flyingGravity = 0.5f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
-    [Range(0.1f, 2f)]
-    public float flyModifer = 1.5f;
+    [Range(1.5f, 3f)]
+    public float flyHeightModifier = 2f;
     [Range(0.1f,1f)]
-    public float jumpFlyLength = 0.3f;
+    public float verticalGainDuration = 0.3f;
 
     [Header("States")]
+    public bool isFacingRight = true;
     public bool isDucking = false;
     public bool isInAir = false;
     public bool isJumping = false;
@@ -37,25 +39,32 @@ public class PlayerController : MonoBehaviour {
     [Header("Outside References")]
     public GameObject inhaleHitboxChild;
     public GameObject exhaleStarPrefab;
+    public GameObject airPuffPrefab;
+    public Transform[] groundCheckers = new Transform[3];
 
     // Private variables
+    private float origGravity = 0f;
     private float currHorizSpeed = 0f;
     private float horizInput = 0f;
     private float jumpInput = 0f;
     private float inhaleHitboxXPos = 0f;
     private float origPlayerHeight = 0f;
     private bool canExhale = true;
+    private bool isMovingUpwards = false;
+
+    /* Unity Methods */
 
     // Saves some of the private variables using the passed in GameObjects
     void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.position.x;
         origPlayerHeight = playerCollider.size.y;
+        origGravity = playerRB.gravityScale;
 
         // If the player starts out in the air, we set the state of jumping to be true
-        if(floatEquality(playerRB.velocity.y, 0) == true)
+        if(CheckGrounded() == false)
         {
-            isJumping = true;
+            isInAir = true;
         }
     }
 
@@ -64,14 +73,6 @@ public class PlayerController : MonoBehaviour {
     {
         // Graphics Check
         GraphicUpdate();
-
-        // Checks if the player just landed on the ground
-        if(isInAir == true && floatEquality(playerRB.velocity.y, 0) == false)
-        {
-            isJumping = false;
-            isFlying = false;
-        }
-        isInAir = floatEquality(playerRB.velocity.y, 0);
 
         // If the player is exhaling, they cannot do any actions
         if(isExhaling == false)
@@ -100,18 +101,55 @@ public class PlayerController : MonoBehaviour {
             playerRB.AddForce(transform.right * horizInput);
 
             // Jumping and Flying
-            if(isFlying == true)
+            if(isMovingUpwards == true)
             {
-                // If the player is in the air, they can do "mini" jumps
-                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / flyModifer));
-            }
-            else if(isJumping == true)
-            {
-                // Normal jumping
-                playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower));
+                if(isFlying == true)
+                {
+                    // If the player is in the air, they can do "mini" jumps
+                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 3f));
+                }
+                else if(isJumping == true)
+                {
+                    // Normal jumping
+                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower));
+                }
             }
         }
     }
+
+    // Checks if the player is grounded
+	private void OnCollisionStay2D(Collision2D collision)
+	{
+        if(CheckGrounded() == true  && isInAir == true)
+        {
+            isJumping = false;
+            isInAir = false;
+
+            // If the player is flying, they automatically do an airpuff
+            if(isFlying == true)
+            {
+                GameObject spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
+                playerGraphics.ChangeSprite("isAirPuffing");
+                isExhaling = true;
+                if(isFacingRight == false)
+                {
+                    spawned.GetComponent<SpriteRenderer>().flipX = true;
+                }
+                Invoke("StopFlying", 0.1f);
+            }
+        }
+	}
+
+    // Checks to see if the player is airborn
+	private void OnCollisionExit2D(Collision2D collision)
+	{
+        if(CheckGrounded() == false && isInAir == false)
+        {
+            isInAir = true;
+        }
+	}
+
+	/* Modular Functions*/
 
 	// Updates the player's graphic according
 	private void GraphicUpdate()
@@ -127,14 +165,14 @@ public class PlayerController : MonoBehaviour {
                     playerGraphics.ChangeSprite("isDucking");
                 }
                 // Is the player moving?
-                else if(horizInput < -0.1f || horizInput > 0.1f)
+                else if(playerRB.velocity.x < -0.1f || playerRB.velocity.x > 0.1f)
                 {
                     playerGraphics.ChangeSprite("isMoving");
                 }
                 else
                 {
                     playerGraphics.ChangeSprite("isIdle");
-                } 
+                }
             }
             else
             {
@@ -159,35 +197,37 @@ public class PlayerController : MonoBehaviour {
     {
         if(isInAir == true)
         {
-            horizInput = Input.GetAxis("Horizontal") * (moveSpeed / 3f);
+            horizInput = Input.GetAxis("Horizontal") * (moveSpeed / 4f);
         }
         else
         {
             horizInput = Input.GetAxis("Horizontal") * moveSpeed;
         }
 
+        // Rotates the player to face left
         if(horizInput < 0)
         {
-            // Rotates the player to face right
+            isFacingRight = false;
             playerGraphics.playerSprite.flipX = true;
             playerRB.MoveRotation(180f);
             inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,0f);
         }
+        // Rotates the player to face right
         else if(horizInput > 0)
         {
-            // Rotates the player to face left
+            isFacingRight = true;
             playerGraphics.playerSprite.flipX = false;
             playerRB.MoveRotation(-180f);
             inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,0f);
         }
     }
 
-    // The player ducks. 
-    // If they have something in their mouth, it dissapears (for now)
+    // The player ducks.
     private void Ducking()
     {
         if(Input.GetKey(KeyCode.S))
         {
+            // If the player has something in their mouths, they will swallow it
             if(isDucking == false)
             {
                 playerCollider.size = new Vector2(1,duckHeight);
@@ -217,25 +257,28 @@ public class PlayerController : MonoBehaviour {
             {
                 // If the player is grounded, they do a standard jump
                 isJumping = true;
+                isMovingUpwards = true;
 
                 // This is done so that the player will stop moving upward after X seconds
-                if(IsInvoking("StopJumpFlyVertical") == false)
+                if(IsInvoking("StopVerticalIncrease") == false)
                 {
-                    Invoke("StopJumpFlyVertical", jumpFlyLength);
+                    Invoke("StopVerticalIncrease", verticalGainDuration);
                 }
             }
             else
             {
-                // The player cannot fly if they inhaled something 
+                // The player cannot fly if they inhaled something
                 if(isStuffed == false)
                 {
                     isJumping = false;
                     isFlying = true;
+                    isMovingUpwards = true;
+                    playerRB.gravityScale = flyingGravity;
 
                     // This is done so that the player will stop moving upward after X seconds
-                    if(IsInvoking("StopJumpFlyVertical") == false)
+                    if(IsInvoking("StopVerticalIncrease") == false)
                     {
-                        Invoke("StopJumpFlyVertical", jumpFlyLength);
+                        Invoke("StopVerticalIncrease", verticalGainDuration);
                     }
                 }
             }
@@ -249,13 +292,35 @@ public class PlayerController : MonoBehaviour {
         {
             // Exhale out a projectile if the player inhaled an object
             // This action is only allowed once canExhale is true
-            if(isStuffed == true && canExhale == true)
+            if(canExhale == true)
             {
-                Instantiate(exhaleStarPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
-                playerGraphics.ChangeSprite("isExhaling");
-                isStuffed = false;
-                isExhaling = true;
-                Invoke("ResetExhaleState", 0.3f);
+                GameObject spawned = null;
+                // Exhales out the enemy that the player has in their mouth
+                if(isStuffed == true)
+                {
+                    spawned = Instantiate(exhaleStarPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
+                    playerGraphics.ChangeSprite("isExhaling");
+                    isStuffed = false;
+                    isExhaling = true;
+                    Invoke("ResetExhaleState", 0.3f);
+                }
+                // Exhales out an airpuff if the player is flying
+                else if(isFlying == true)
+                {
+                    spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
+                    playerGraphics.ChangeSprite("isAirPuffing");
+                    isExhaling = true;
+                    Invoke("StopFlying", 0.1f);
+                }
+
+                // Makes sure the projectile is facing in the direction the player is facing
+                if(spawned != null)
+                {
+                    if(isFacingRight == false)
+                    {
+                        spawned.GetComponent<SpriteRenderer>().flipX = true;
+                    }
+                }
             }
         }
         else if(Input.GetKey(KeyCode.H))
@@ -288,19 +353,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    // Handles checking if two floats are equal
-    // Returns false if they aren't equal
-    private bool floatEquality(float f1, float f2)
-    {
-        if(Mathf.Abs(f1 - f2) < 0.00001f)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
+    /* Invoke Methods */
 
     // Resets the graphic and state for exhaling
     private void ResetExhaleState()
@@ -316,9 +369,56 @@ public class PlayerController : MonoBehaviour {
     }
 
     // Called in an Invoke to reset the player from moving upward
-    private void StopJumpFlyVertical()
+    private void StopVerticalIncrease()
     {
         isJumping = false;
+        isMovingUpwards = false;
+    }
+
+    // Called in an Invoke to make the player fall down
+    private void StopFlying()
+    {
         isFlying = false;
+        isExhaling = false;
+        playerRB.gravityScale = origGravity;
+    }
+
+    /* Helper Methods */
+
+    // Handles checking if two floats are equal
+    // Returns false if they aren't equal
+    private bool floatEquality(float f1, float f2)
+    {
+        if(Mathf.Abs(f1 - f2) < 0.00001f)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    // Checks if the player is grounded properly
+    private bool CheckGrounded()
+    {
+        // If the player is jumping, we are not going to check if they are grounded because they WILL NOT be grounded during that
+        if(isJumping == false)
+        {
+             // We just need to check if at least one of these checks are valid.
+            for(int i = 0; i < 3; ++i)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(groundCheckers[i].position, -Vector2.up, 0.1f);
+                if(hit == true)
+                {
+                    if(hit.collider.gameObject.tag == "Ground" && hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
     }
 }

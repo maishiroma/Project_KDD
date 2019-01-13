@@ -20,6 +20,7 @@ public class PlayerGraphics : MonoBehaviour {
     public Sprite player_exhale;
     public Sprite player_jump;
     public Sprite player_fly;
+    public Sprite player_airpuffed;
     public Sprite player_airborn;
     public Sprite player_land;
 
@@ -51,6 +52,9 @@ public class PlayerGraphics : MonoBehaviour {
                 break;
             case "isFlying":   // When the player is flying
                 playerSprite.sprite = player_fly;
+                break;
+            case "isAirPuffing":   // When the player is exhaling an airpuff
+                playerSprite.sprite = player_airpuffed;
                 break;
             case "isAirborn":   // When the player is in the air not jumping or flying
                 playerSprite.sprite = player_airborn;
