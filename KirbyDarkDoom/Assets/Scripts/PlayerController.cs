@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour {
     // Saves some of the private variables using the passed in GameObjects
     void Start()
     {
-        inhaleHitboxXPos = inhaleHitboxChild.transform.position.x;
+        inhaleHitboxXPos = inhaleHitboxChild.transform.localPosition.x;
         origPlayerHeight = playerCollider.size.y;
         origGravity = playerRB.gravityScale;
 
