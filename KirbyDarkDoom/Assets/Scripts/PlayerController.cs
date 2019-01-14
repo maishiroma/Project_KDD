@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour {
     public float flyingGravity = 0.5f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
-    [Range(1.5f, 3f)]
+    [Range(0.5f, 5f)]
     public float flyHeightModifier = 2f;
     [Range(0.1f,1f)]
     public float verticalGainDuration = 0.3f;
@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour {
     public bool isInhaling = false;
     public bool isStuffed = false;
     public bool isExhaling = false;
+    public bool isLanding = false;
 
     [Header("Component References")]
     public BoxCollider2D playerCollider;
@@ -137,6 +138,14 @@ public class PlayerController : MonoBehaviour {
                 }
                 Invoke("StopFlying", 0.1f);
             }
+            else if(isInhaling == false)
+            {
+                isLanding = true;
+                if(IsInvoking("StopLandingAnimation") == false)
+                {
+                    Invoke("StopLandingAnimation", 0.1f);
+                }
+            }
         }
 	}
 
@@ -159,8 +168,12 @@ public class PlayerController : MonoBehaviour {
         {
             if(isInAir == false)
             {
+                if(isLanding == true)
+                {
+                    playerGraphics.ChangeSprite("isLanding");
+                }
                 // Is the player ducking?
-                if(isDucking == true)
+                else if(isDucking == true)
                 {
                     playerGraphics.ChangeSprite("isDucking");
                 }
@@ -383,11 +396,17 @@ public class PlayerController : MonoBehaviour {
         playerRB.gravityScale = origGravity;
     }
 
+    // Called in an Invoke to stop the animation for landing to happen
+    private void StopLandingAnimation()
+    {
+        isLanding = false;
+    }
+
     /* Helper Methods */
 
     // Handles checking if two floats are equal
     // Returns false if they aren't equal
-    private bool floatEquality(float f1, float f2)
+    private bool FloatEquality(float f1, float f2)
     {
         if(Mathf.Abs(f1 - f2) < 0.00001f)
         {
