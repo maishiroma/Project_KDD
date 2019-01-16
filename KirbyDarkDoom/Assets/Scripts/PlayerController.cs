@@ -31,11 +31,13 @@ public class PlayerController : MonoBehaviour {
     public bool isStuffed = false;
     public bool isExhaling = false;
     public bool isLanding = false;
+    public bool isTakingDamage = false;
 
     [Header("Component References")]
     public BoxCollider2D playerCollider;
     public Rigidbody2D playerRB;
     public PlayerGraphics playerGraphics;
+    public PlayerHealth playerHealth;
 
     [Header("Outside References")]
     public GameObject inhaleHitboxChild;
@@ -75,8 +77,8 @@ public class PlayerController : MonoBehaviour {
         // Graphics Check
         GraphicUpdate();
 
-        // If the player is exhaling, they cannot do any actions
-        if(isExhaling == false)
+        // If the player is exhaling or dying, they cannot do any actions
+        if(isExhaling == false && playerHealth.IsDying == false)
         {
             // If the player is inhaling or ducking, they cannot move or jump
             if(isInhaling == false)
@@ -95,8 +97,8 @@ public class PlayerController : MonoBehaviour {
     // Handles the movement for the player
     private void FixedUpdate()
     {
-        // The player will only move if they are neither exhaling or inhaling
-        if(isExhaling == false && isInhaling == false && isDucking == false)
+        // The player will only move if they are neither exhaling or inhaling (Or if they are dying/got hit)
+        if(isExhaling == false && isInhaling == false && isDucking == false && isTakingDamage == false && playerHealth.IsDying == false)
         {
             // Horizontal movement
             playerRB.AddForce(transform.right * horizInput);
@@ -118,7 +120,20 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    // Checks if the player is grounded
+    // Handles if the player hits an enemy
+	private void OnCollisionEnter2D(Collision2D collision)
+	{
+        if(collision.gameObject.tag == "Enemy" && isTakingDamage == false)
+        {
+            playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
+            playerHealth.ActivateInvincibility();
+            isTakingDamage = true;
+            playerGraphics.ChangeSprite("isDamaged");
+            Invoke("StopDamageLook", 0.5f);
+        }
+	}
+
+	// Checks if the player is grounded
 	private void OnCollisionStay2D(Collision2D collision)
 	{
         if(CheckGrounded() == true  && isInAir == true)
@@ -163,10 +178,19 @@ public class PlayerController : MonoBehaviour {
 	// Updates the player's graphic according
 	private void GraphicUpdate()
     {
-        // If the player is stuffed, exhaling, or inhaling, their sprite will not be updated
-        if(isStuffed == false && isExhaling == false && isInhaling == false)
+        // If the player is dying, they will only show that animation
+        if(playerHealth.IsDying)
         {
-            if(isInAir == false)
+            playerGraphics.ChangeSprite("isDead");
+        }
+        // If the player is exhaling, or inhaling, their sprite will not be updated
+        else if(isExhaling == false && isInhaling == false && isTakingDamage == false)
+        {
+            if(isStuffed == true)
+            {
+                playerGraphics.ChangeSprite("isStuffed");
+            }
+            else if(isInAir == false)
             {
                 if(isLanding == true)
                 {
@@ -400,6 +424,12 @@ public class PlayerController : MonoBehaviour {
     private void StopLandingAnimation()
     {
         isLanding = false;
+    }
+
+    // Called in an Invoke to stop the player animation of taking damage
+    private void StopDamageLook()
+    {
+        isTakingDamage = false;
     }
 
     /* Helper Methods */

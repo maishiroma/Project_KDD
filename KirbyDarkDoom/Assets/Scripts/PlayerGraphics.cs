@@ -23,6 +23,8 @@ public class PlayerGraphics : MonoBehaviour {
     public Sprite player_airpuffed;
     public Sprite player_airborn;
     public Sprite player_land;
+    public Sprite player_damaged;
+    public Sprite player_dead;
 
     // Changes the sprite to whatever action is passed into here.
     public void ChangeSprite(string stateName)
@@ -61,6 +63,12 @@ public class PlayerGraphics : MonoBehaviour {
                 break;
             case "isLanding":  // landed on the ground
                 playerSprite.sprite = player_land;
+                break;
+            case "isDamaged":  // When the player is hit
+                playerSprite.sprite = player_damaged;
+                break;
+            case "isDead":  // When the player is dead, aka, lost all health
+                playerSprite.sprite = player_dead;
                 break;
             default:    // Prints out error if a state is misspelled or it doesn't exist
                 print("I don't know what " + stateName + " is!");

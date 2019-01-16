@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 50819204955772002}
   - component: {fileID: 114461392090596268}
   - component: {fileID: 114348740542431684}
+  - component: {fileID: 114708351686624562}
   m_Layer: 10
   m_Name: TestPlayer
   m_TagString: Player
@@ -259,6 +260,8 @@ MonoBehaviour:
   player_airpuffed: {fileID: 21300000, guid: 8c7705a6c4b3a4f5da2d8293e5a8d617, type: 3}
   player_airborn: {fileID: 21300000, guid: 655ed3085fe20457694a2b59af7ce5a1, type: 3}
   player_land: {fileID: 21300000, guid: 23ecc002b6aa3439c8918c55517ec473, type: 3}
+  player_damaged: {fileID: 21300000, guid: eee4aed5338154dd1945f4efcc250003, type: 3}
+  player_dead: {fileID: 21300000, guid: f0ede7e88db3e42cba35161f75d78223, type: 3}
 --- !u!114 &114461392090596268
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -286,9 +289,11 @@ MonoBehaviour:
   isStuffed: 0
   isExhaling: 0
   isLanding: 0
+  isTakingDamage: 0
   playerCollider: {fileID: 61009220270228268}
   playerRB: {fileID: 50819204955772002}
   playerGraphics: {fileID: 114348740542431684}
+  playerHealth: {fileID: 114708351686624562}
   inhaleHitboxChild: {fileID: 1958170377110874}
   exhaleStarPrefab: {fileID: 1039827959546552, guid: 6376ff207ffbc4a0d8bb94cb12898cd6,
     type: 2}
@@ -298,6 +303,22 @@ MonoBehaviour:
   - {fileID: 4884301790934160}
   - {fileID: 4136924388845128}
   - {fileID: 4334516094680844}
+--- !u!114 &114708351686624562
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1911324619482096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fa62b6e8b87040f691dea63df827d85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  isInvincible: 0
+  invincibilityTime: 2
+  entitySpriteRender: {fileID: 212156262353481102}
 --- !u!114 &114868753932337642
 MonoBehaviour:
   m_ObjectHideFlags: 1
