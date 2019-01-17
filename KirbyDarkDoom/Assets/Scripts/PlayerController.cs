@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    // Handles if the player hits an enemy
+    // Handles if the player hits an enemy or any specific objects
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
         if(collision.gameObject.tag == "Enemy" && isTakingDamage == false)

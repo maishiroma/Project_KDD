@@ -8,6 +8,9 @@ using UnityEngine;
 
 public class PlayerHealth : BaseHealth
 {
+    [Header("Sub Variables")]
+    public int numbOfLives = 3;
+
     [Header("Sub Components")]
     public Rigidbody2D playerRB;
     public BoxCollider2D playerHitBox;
@@ -40,12 +43,21 @@ public class PlayerHealth : BaseHealth
     // Does what the base Respawn does, except this one resets the variables in this method
     public override void Respawn()
     {
-        base.Respawn();
+        if(numbOfLives > 0)
+        {
+            base.Respawn();
 
-        playerRB.rotation = 0f;
-        isDying = false;
-        playerHitBox.enabled = true;
-        playerRB.freezeRotation = true;
+            playerRB.rotation = 0f;
+            isDying = false;
+            playerHitBox.enabled = true;
+            playerRB.freezeRotation = true;
+            numbOfLives--;
+        }
+        else
+        {
+            // GAMEOVER SCREEN
+            GameManager.Instance.GoToGameOver();
+        }
     }
 
     // Constantly checks if the player is dead

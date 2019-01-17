@@ -319,6 +319,7 @@ MonoBehaviour:
   isInvincible: 0
   invincibilityTime: 2
   entitySpriteRender: {fileID: 212156262353481102}
+  numbOfLives: 3
   playerRB: {fileID: 50819204955772002}
   playerHitBox: {fileID: 61009220270228268}
 --- !u!114 &114868753932337642
