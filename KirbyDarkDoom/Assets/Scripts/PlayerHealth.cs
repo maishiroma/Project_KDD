@@ -8,6 +8,10 @@ using UnityEngine;
 
 public class PlayerHealth : BaseHealth
 {
+    [Header("Sub Components")]
+    public Rigidbody2D playerRB;
+    public BoxCollider2D playerHitBox;
+
     // Private variables
     private bool isDying = false;
 
@@ -22,10 +26,26 @@ public class PlayerHealth : BaseHealth
         if(currentHealth <= 0 && isDying == false)
         {
             isDying = true;
+            playerHitBox.enabled = false;
+            playerRB.freezeRotation = false;
 
-            // TODO: Cutscene of player dying
-            Invoke("RemovePlayer", 2f);
+            Invoke("Respawn", 2f);
         }
+        else if(isDying == true)
+        {
+            playerRB.MoveRotation(playerRB.rotation + 10f);
+        }
+    }
+
+    // Does what the base Respawn does, except this one resets the variables in this method
+    public override void Respawn()
+    {
+        base.Respawn();
+
+        playerRB.rotation = 0f;
+        isDying = false;
+        playerHitBox.enabled = true;
+        playerRB.freezeRotation = true;
     }
 
     // Constantly checks if the player is dead
@@ -33,10 +53,4 @@ public class PlayerHealth : BaseHealth
 	{
         DyingAction();
 	}
-
-	// Called in an invoke to remove the player temporarily.
-	private void RemovePlayer()
-    {
-        gameObject.SetActive(false);
-    }
 }

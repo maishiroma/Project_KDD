@@ -17,6 +17,9 @@ public abstract class BaseHealth : MonoBehaviour {
     [Header("Base Components")]
     public SpriteRenderer entitySpriteRender;
 
+    // Private Variables
+    private Vector2 spawnLocation;
+
     // Makes sure the healths are at a valid amount
 	private void OnValidate()
 	{
@@ -28,6 +31,7 @@ public abstract class BaseHealth : MonoBehaviour {
 	private void Start()
 	{
         currentHealth = maxHealth;
+        spawnLocation = gameObject.transform.position;
 	}
 
     // Returns true if the current health < 0
@@ -68,6 +72,18 @@ public abstract class BaseHealth : MonoBehaviour {
             Invoke("ResetInvincibility", invincibilityTime);
             InvokeRepeating("FlashSprite",0f, 0.1f);
         }
+    }
+
+    // Respawns the entity with full health
+    // Can be overriden
+    public virtual void Respawn()
+    {
+        if(gameObject.activeInHierarchy == false)
+        {
+            gameObject.SetActive(true);
+        }
+        currentHealth = maxHealth;
+        gameObject.transform.position = spawnLocation;
     }
 
     // Called in an Invoke to reset the entity's invincibility
