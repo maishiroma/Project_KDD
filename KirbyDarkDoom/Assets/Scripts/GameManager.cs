@@ -1,4 +1,4 @@
-﻿/* A basic script that handles global game stuff WIP
+﻿/* A basic script that handles global game actions. There will ONLY be one of these when the game spawns.
  * 
  */
 
@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
 
     [Header("General Variables")]
-    public int lastSceneIndex;
+    public int lastSceneIndex;      // Used to remember the last level the player was on
 
     // Static Variables
     public static GameManager Instance;

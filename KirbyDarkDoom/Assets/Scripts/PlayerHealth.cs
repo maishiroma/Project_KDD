@@ -1,9 +1,6 @@
-﻿/*  This controls the player's health
+﻿/*  By inderiting from BaseHealth, this adds additional features to the player's Health mechanic
  * 
  */
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerHealth : BaseHealth
@@ -26,8 +23,9 @@ public class PlayerHealth : BaseHealth
     // When the player loses all of their health, they will lost a life
     public override void DyingAction()
     {
-        if(currentHealth <= 0 && isDying == false)
+        if(CurrentHealth <= 0 && isDying == false)
         {
+            // We start the dying animation
             isDying = true;
             playerHitBox.enabled = false;
             playerRB.freezeRotation = false;
@@ -36,6 +34,7 @@ public class PlayerHealth : BaseHealth
         }
         else if(isDying == true)
         {
+            // While the player is dying, we rotate them (graphic effect)
             playerRB.MoveRotation(playerRB.rotation + 10f);
         }
     }
@@ -47,10 +46,12 @@ public class PlayerHealth : BaseHealth
         {
             base.Respawn();
 
+            // we reset the player's variables back to normal
             playerRB.rotation = 0f;
             isDying = false;
             playerHitBox.enabled = true;
             playerRB.freezeRotation = true;
+
             numbOfLives--;
         }
         else

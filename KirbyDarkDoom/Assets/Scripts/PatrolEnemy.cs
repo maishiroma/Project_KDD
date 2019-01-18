@@ -62,7 +62,7 @@ public class PatrolEnemy : BaseEnemy
         }
         else if(collision.gameObject.tag == "Player")
         {
-            // Enemy is defeated, but player also takes damage
+            // Enemy is defeated, but player also takes damage, which is handled in PlayerController
             gameObject.SetActive(false);
         }
 	}

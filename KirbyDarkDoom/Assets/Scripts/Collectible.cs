@@ -1,10 +1,11 @@
-﻿/*  Basis for collecting an item
+﻿/*  The standard script for collecting an item
  * 
  */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Determines what kind of function this collectible does
 public enum CollectibleType
 {
     HEALTH,
@@ -24,7 +25,7 @@ public class Collectible : MonoBehaviour {
 	{
         if(typeOfCollectible == CollectibleType.LIVES)
         {
-            // If the type if lives, we will always make sure the value of this will be 1
+            // If the type if lives, we will ALWAYS make sure the value of this will be 1
             amount = 1;
         }
 	}
@@ -36,6 +37,7 @@ public class Collectible : MonoBehaviour {
         {
             PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
 
+            // Dependin on the collectible's function, we do various things
             switch(typeOfCollectible)
             {
                 case CollectibleType.HEALTH:

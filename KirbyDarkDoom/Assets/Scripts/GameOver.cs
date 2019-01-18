@@ -1,6 +1,7 @@
 ﻿/*  This script handles actions taken from the Game Over Screen
  * 
  */
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

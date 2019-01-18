@@ -1,10 +1,5 @@
-﻿/*  This script handles the player movement. WIP
- *
- *
+﻿/*  This script handles player movement and all collisions with the player
  */
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
@@ -55,8 +50,6 @@ public class PlayerController : MonoBehaviour {
     private bool canExhale = true;
     private bool isMovingUpwards = false;
 
-    /* Unity Methods */
-
     // Saves some of the private variables using the passed in GameObjects
     void Start()
     {
@@ -71,7 +64,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    // Receives the input from the player here
+    // Receives the input from the player
     private void Update()
     {
         // Graphics Check
@@ -155,6 +148,7 @@ public class PlayerController : MonoBehaviour {
             }
             else if(isInhaling == false)
             {
+                // Unless the player is inhaling, they will do a quick landing animation
                 isLanding = true;
                 if(IsInvoking("StopLandingAnimation") == false)
                 {
@@ -172,8 +166,6 @@ public class PlayerController : MonoBehaviour {
             isInAir = true;
         }
 	}
-
-	/* Modular Functions*/
 
 	// Updates the player's graphic according
 	private void GraphicUpdate()
@@ -327,8 +319,7 @@ public class PlayerController : MonoBehaviour {
     {
         if(Input.GetKeyDown(KeyCode.H))
         {
-            // Exhale out a projectile if the player inhaled an object
-            // This action is only allowed once canExhale is true
+            // These actions are only allowed once canExhale is true
             if(canExhale == true)
             {
                 GameObject spawned = null;
@@ -390,16 +381,14 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    /* Invoke Methods */
-
-    // Resets the graphic and state for exhaling
+    // Resets the graphic and state for exhaling in an Invoke
     private void ResetExhaleState()
     {
         isExhaling = false;
         playerGraphics.ChangeSprite("isIdle");
     }
 
-    // Enables the exhale interaction
+    // Enables the exhale interaction from an Invoke
     private void EnableExhale()
     {
         canExhale = true;
@@ -432,10 +421,8 @@ public class PlayerController : MonoBehaviour {
         isTakingDamage = false;
     }
 
-    /* Helper Methods */
 
-    // Handles checking if two floats are equal
-    // Returns false if they aren't equal
+    // Handles checking if two floats are equal. Returns false if they aren't equal
     private bool FloatEquality(float f1, float f2)
     {
         if(Mathf.Abs(f1 - f2) < 0.00001f)

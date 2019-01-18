@@ -10,7 +10,6 @@ public abstract class BaseHealth : MonoBehaviour {
 
 	[Header("Base Variables")]
     public float maxHealth;
-    public float currentHealth;
     public bool isInvincible = false;
     public float invincibilityTime = 2f;
 
@@ -19,6 +18,12 @@ public abstract class BaseHealth : MonoBehaviour {
 
     // Private Variables
     private Vector2 spawnLocation;
+    private float currentHealth;
+
+    // Getters
+    public float CurrentHealth {
+        get {return currentHealth;}
+    }
 
     // Makes sure the healths are at a valid amount
 	private void OnValidate()
@@ -33,12 +38,6 @@ public abstract class BaseHealth : MonoBehaviour {
         currentHealth = maxHealth;
         spawnLocation = gameObject.transform.position;
 	}
-
-    // Returns true if the current health < 0
-    public bool CheckIfAlive()
-    {
-        return currentHealth > 0;
-    }
 
 	// Call this method to decrease health
 	public void TakeDamage(float damagePower)
@@ -63,10 +62,10 @@ public abstract class BaseHealth : MonoBehaviour {
         }
     }
 
-    // This method is called to prevent the entity from taking damage for 
+    // This method is called to prevent the entity from taking damage for X seconds
     public void ActivateInvincibility()
     {
-        if(isInvincible == false)
+        if(isInvincible == false && currentHealth > 0)
         {
             isInvincible = true;
             Invoke("ResetInvincibility", invincibilityTime);
@@ -93,11 +92,11 @@ public abstract class BaseHealth : MonoBehaviour {
         CancelInvoke("FlashSprite");
     }
 
-    // Called in an Invoke Repeating to simulate player invincibility
+    // Called in an Invoke Repeating to simulate an entity's invincibility
     private void FlashSprite()
     {
         Color entitySprite = entitySpriteRender.color;
-        if(entitySprite.a == 1f)
+        if(Mathf.Abs(entitySprite.a - 1f) < 0.00001f)
         {
             entitySpriteRender.color = new Color(entitySprite.r, entitySprite.g, entitySprite.b, 0.5f);
         }
