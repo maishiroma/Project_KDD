@@ -10,6 +10,7 @@ public abstract class BaseEnemy : MonoBehaviour {
 
 	[Header("Base Variables")]
     public float moveSpeed = 5f;
+    public float attackPower = 20f;
 
     [Header("Base States")]
     public bool isFacingRight = true;
