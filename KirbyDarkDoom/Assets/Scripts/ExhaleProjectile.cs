@@ -38,9 +38,9 @@ public class ExhaleProjectile : MonoBehaviour {
         }
         else if(collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
         {
-            if(collision.tag == "Enemy")
+            if(collision.tag == "Enemy" || collision.tag == "Block")
             {
-                // The enemy is defeated!
+                // The target is defeated!
                 collision.gameObject.SetActive(false);
                 DestroyProjectile();
             }

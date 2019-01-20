@@ -13,39 +13,74 @@ public class InhaleHitbox : MonoBehaviour {
     public PlayerController playerController;
 
     //Private Variables
-    private Rigidbody2D objectToBeInhaled;
+    private Rigidbody2D rbToInhale;
+    private bool isInhalingObject;
 
-    // If an enemy is in the inhale range, they will start to be dragged toward the player
+    // If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        if(collision.tag == "Enemy")
+        if(CheckIfInhalable(collision.gameObject.tag) == true)
         {
-            objectToBeInhaled = collision.gameObject.GetComponent<Rigidbody2D>();
+            isInhalingObject = true;
+            if(collision.gameObject.GetComponent<Rigidbody2D>() != null)
+            {
+                rbToInhale = collision.gameObject.GetComponent<Rigidbody2D>();
+            }
         }
 	}
 
-    // Pulls the enemy toward the player
+    // Pulls the object toward the player
 	private void OnTriggerStay2D(Collider2D collision)
 	{
-        if(collision.tag == "Enemy" && objectToBeInhaled != null)
+        if(CheckIfInhalable(collision.gameObject.tag) == true && isInhalingObject == true)
         {
-            // Calculates the position that the enemy will be pulled in
-            Vector2 newPos = Vector2.MoveTowards(objectToBeInhaled.position, playerRB.position, 0.1f);
+            Vector2 newPos;
 
-            // If the enemy is close to the player while they are being inhaled, they will make the player stuffed
-            if(Vector2.Distance(playerRB.position, newPos) <= 1f)
+            // Calculates the position that the object will be pulled in
+            // Depending on whether or not the object has a RB, we determine how we check its position
+            if(rbToInhale != null)
             {
-                playerController.playerGraphics.ChangeSprite("isStuffed");
-                objectToBeInhaled.gameObject.SetActive(false);
-                objectToBeInhaled = null;
-                gameObject.SetActive(false);
-                playerController.isStuffed = true;
-                playerController.isInhaling = false;
+                newPos = Vector2.MoveTowards(rbToInhale.position, playerRB.position, 0.1f);
             }
             else
             {
-                objectToBeInhaled.MovePosition(newPos);
+                newPos = Vector2.MoveTowards(collision.transform.position, playerRB.position, 0.1f);
+            }
+
+            // If the object is close to the player while they are being inhaled, they will make the player stuffed
+            if(Vector2.Distance(playerRB.position, newPos) <= 1f)
+            {
+                playerController.playerGraphics.ChangeSprite("isStuffed");
+                playerController.isStuffed = true;
+                playerController.isInhaling = false;
+                gameObject.SetActive(false);
+                collision.gameObject.SetActive(false);
+                rbToInhale = null;
+                isInhalingObject = false;
+            }
+            else
+            {
+                if(rbToInhale != null)
+                {
+                    rbToInhale.MovePosition(newPos);
+                }
+                else
+                {
+                    collision.transform.position = newPos;
+                }
             }
         }
 	}
+
+    // Checks if the given tag name is something the player can inhale
+    private bool CheckIfInhalable(string collisionName)
+    {
+        switch(collisionName)
+        {
+            case "Enemy":
+            case "Block":
+                return true;
+        }
+        return false;
+    }
 }

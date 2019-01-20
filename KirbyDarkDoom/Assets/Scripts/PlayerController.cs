@@ -421,7 +421,6 @@ public class PlayerController : MonoBehaviour {
         isTakingDamage = false;
     }
 
-
     // Handles checking if two floats are equal. Returns false if they aren't equal
     private bool FloatEquality(float f1, float f2)
     {
@@ -448,6 +447,10 @@ public class PlayerController : MonoBehaviour {
                 if(hit == true)
                 {
                     if(hit.collider.gameObject.tag == "Ground" && hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
+                    {
+                        return true;
+                    }
+                    else if(hit.collider.gameObject.tag == "Block")
                     {
                         return true;
                     }
