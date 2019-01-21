@@ -129,23 +129,13 @@ public class PlayerController : MonoBehaviour {
             else if(isSliding == true)
             {
                 // Sliding movement
-                if(isInAir == false)
+                if(isFacingRight == true)
                 {
-                    if(isFacingRight == true)
-                    {
-                        playerRB.MovePosition(playerRB.position + new Vector2(slideRange,0));
-                    }
-                    else
-                    {
-                        playerRB.MovePosition(playerRB.position + new Vector2(-slideRange,0));
-                    }
+                    playerRB.MovePosition(playerRB.position + new Vector2(slideRange,0));
                 }
                 else
                 {
-                    // If the player slides off the edge, their slide is cancelled
-                    CancelInvoke("StopSliding");
-                    StopSliding();
-                    isDucking = false;
+                    playerRB.MovePosition(playerRB.position + new Vector2(-slideRange,0));
                 }
             }
         }
@@ -202,6 +192,14 @@ public class PlayerController : MonoBehaviour {
         if(CheckGrounded() == false && isInAir == false)
         {
             isInAir = true;
+
+            if(isSliding == true)
+            {
+                // If the player slides off the edge, their slide is cancelled
+                CancelInvoke("StopSliding");
+                StopSliding();
+                isDucking = false;
+            }
         }
 	}
 
