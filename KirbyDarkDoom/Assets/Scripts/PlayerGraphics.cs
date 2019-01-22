@@ -14,6 +14,7 @@ public class PlayerGraphics : MonoBehaviour {
     [Header("Sprite List")]
     public Sprite player_idle;
     public Sprite player_move;
+    public Sprite player_sliding;
     public Sprite player_ducking;
     public Sprite player_inhale;
     public Sprite player_stuffed;
@@ -39,6 +40,9 @@ public class PlayerGraphics : MonoBehaviour {
                 break;
             case "isMoving":    // Moving on the ground
                 playerSprite.sprite = player_move;
+                break;
+            case "isSliding": // Sliding on the ground
+                playerSprite.sprite = player_sliding;
                 break;
             case "isInhaling":  // When the player is inhaling
                 playerSprite.sprite = player_inhale;

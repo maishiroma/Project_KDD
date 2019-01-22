@@ -99,8 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ac97721a5ac4761b0597e3fe15370e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
-  timeToLive: 0.3
+  moveSpeed: 0.05
+  timeToLive: 0.2
   damagePower: 100
   projectileRB: {fileID: 50277976993063092}
 --- !u!212 &212766673316147182

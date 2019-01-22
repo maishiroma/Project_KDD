@@ -26,7 +26,7 @@ public class ExhaleProjectile : MonoBehaviour {
     // The star will continuously move in a given direction
     private void FixedUpdate()
     {
-        projectileRB.AddForce(Vector2.right * moveSpeed);
+        projectileRB.MovePosition(projectileRB.position + new Vector2(moveSpeed, 0));
     }
 
     // If the star hits an enemy or wall, it will dissapear

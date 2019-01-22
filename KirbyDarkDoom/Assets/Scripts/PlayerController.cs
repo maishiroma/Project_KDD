@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
     public float flyingGravity = 0.5f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
+    [Range(0.1f, 1f)]
+    public float slideRange = 0.1f;
     [Range(0.5f, 5f)]
     public float flyHeightModifier = 2f;
     [Range(0.1f,1f)]
@@ -19,6 +21,7 @@ public class PlayerController : MonoBehaviour {
     [Header("States")]
     public bool isFacingRight = true;
     public bool isDucking = false;
+    public bool isSliding = false;
     public bool isInAir = false;
     public bool isJumping = false;
     public bool isFlying = false;
@@ -36,6 +39,7 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Outside References")]
     public GameObject inhaleHitboxChild;
+    public GameObject slideHitboxChild;
     public GameObject exhaleStarPrefab;
     public GameObject airPuffPrefab;
     public Transform[] groundCheckers = new Transform[3];
@@ -46,6 +50,7 @@ public class PlayerController : MonoBehaviour {
     private float horizInput = 0f;
     private float jumpInput = 0f;
     private float inhaleHitboxXPos = 0f;
+    private float slideHitboxXPos = 0f;
     private float origPlayerHeight = 0f;
     private bool canExhale = true;
     private bool isMovingUpwards = false;
@@ -54,6 +59,7 @@ public class PlayerController : MonoBehaviour {
     void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.localPosition.x;
+        slideHitboxXPos = slideHitboxChild.transform.localPosition.x;
         origPlayerHeight = playerCollider.size.y;
         origGravity = playerRB.gravityScale;
 
@@ -74,16 +80,23 @@ public class PlayerController : MonoBehaviour {
         if(isExhaling == false && playerHealth.IsDying == false)
         {
             // If the player is inhaling or ducking, they cannot move or jump
-            if(isInhaling == false)
+            if(isInhaling == false && isDucking == false)
             {
-                if(isDucking == false)
-                {
-                    JumpMovement();
-                    HorizontalMovement();
-                }
+                JumpMovement();
+                HorizontalMovement();
+            }
+
+            // If the player is ducking, they cannot inhale or exhale
+            if(isDucking == false)
+            {
+                InhaleExhaleAction();
+            }
+
+            // If the player is not in the air, they can duck
+            if(isInAir == false)
+            {
                 Ducking();
             }
-            InhaleExhaleAction();
         }
     }
 
@@ -91,23 +104,38 @@ public class PlayerController : MonoBehaviour {
     private void FixedUpdate()
     {
         // The player will only move if they are neither exhaling or inhaling (Or if they are dying/got hit)
-        if(isExhaling == false && isInhaling == false && isDucking == false && isTakingDamage == false && playerHealth.IsDying == false)
+        if(isExhaling == false && isInhaling == false  && isTakingDamage == false && playerHealth.IsDying == false)
         {
-            // Horizontal movement
-            playerRB.AddForce(transform.right * horizInput);
-
-            // Jumping and Flying
-            if(isMovingUpwards == true)
+            if(isDucking == false)
             {
-                if(isFlying == true)
+                // Horizontal movement
+                playerRB.AddForce(transform.right * horizInput);
+
+                // Jumping and Flying
+                if(isMovingUpwards == true)
                 {
-                    // If the player is in the air, they can do "mini" jumps
-                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 3f));
+                    if(isFlying == true)
+                    {
+                        // If the player is in the air, they can do "mini" jumps
+                        playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 3f));
+                    }
+                    else if(isJumping == true)
+                    {
+                        // Normal jumping
+                        playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower));
+                    }
                 }
-                else if(isJumping == true)
+            }
+            else if(isSliding == true)
+            {
+                // Sliding movement
+                if(isFacingRight == true)
                 {
-                    // Normal jumping
-                    playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower));
+                    playerRB.MovePosition(playerRB.position + new Vector2(slideRange,0));
+                }
+                else
+                {
+                    playerRB.MovePosition(playerRB.position + new Vector2(-slideRange,0));
                 }
             }
         }
@@ -164,6 +192,14 @@ public class PlayerController : MonoBehaviour {
         if(CheckGrounded() == false && isInAir == false)
         {
             isInAir = true;
+
+            if(isSliding == true)
+            {
+                // If the player slides off the edge, their slide is cancelled
+                CancelInvoke("StopSliding");
+                StopSliding();
+                isDucking = false;
+            }
         }
 	}
 
@@ -184,9 +220,15 @@ public class PlayerController : MonoBehaviour {
             }
             else if(isInAir == false)
             {
+                // This takes priority over all other graphics
                 if(isLanding == true)
                 {
                     playerGraphics.ChangeSprite("isLanding");
+                }
+                // is the player sliding?
+                else if(isSliding == true)
+                {
+                    playerGraphics.ChangeSprite("isSliding");
                 }
                 // Is the player ducking?
                 else if(isDucking == true)
@@ -205,10 +247,12 @@ public class PlayerController : MonoBehaviour {
             }
             else
             {
+                // Is the player puffing?
                 if(isFlying == true)
                 {
                     playerGraphics.ChangeSprite("isFlying");
                 }
+                // Is the player jumping?
                 else if(isJumping == true)
                 {
                     playerGraphics.ChangeSprite("isJumping");
@@ -239,7 +283,8 @@ public class PlayerController : MonoBehaviour {
             isFacingRight = false;
             playerGraphics.playerSprite.flipX = true;
             playerRB.MoveRotation(180f);
-            inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,0f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,inhaleHitboxChild.transform.localPosition.y);
+            slideHitboxChild.transform.localPosition = new Vector2(-slideHitboxXPos,slideHitboxChild.transform.localPosition.y);
         }
         // Rotates the player to face right
         else if(horizInput > 0)
@@ -247,7 +292,8 @@ public class PlayerController : MonoBehaviour {
             isFacingRight = true;
             playerGraphics.playerSprite.flipX = false;
             playerRB.MoveRotation(-180f);
-            inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,0f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,inhaleHitboxChild.transform.localPosition.y);
+            slideHitboxChild.transform.localPosition = new Vector2(slideHitboxXPos,slideHitboxChild.transform.localPosition.y);
         }
     }
 
@@ -264,6 +310,16 @@ public class PlayerController : MonoBehaviour {
                 isDucking = true;
                 isStuffed = false;
                 canExhale = true;
+            }
+            else
+            {
+                // If the player is ducking and hits inhale, they will slide
+                if(Input.GetKeyDown(KeyCode.H) && !IsInvoking("StopSliding"))
+                {
+                    isSliding = true;
+                    slideHitboxChild.SetActive(true);
+                    Invoke("StopSliding", 0.2f);
+                }
             }
         }
         else
@@ -419,6 +475,13 @@ public class PlayerController : MonoBehaviour {
     private void StopDamageLook()
     {
         isTakingDamage = false;
+    }
+
+    // Stops the slide from an Invoke call
+    private void StopSliding()
+    {
+        isSliding = false;
+        slideHitboxChild.SetActive(false);
     }
 
     // Handles checking if two floats are equal. Returns false if they aren't equal
