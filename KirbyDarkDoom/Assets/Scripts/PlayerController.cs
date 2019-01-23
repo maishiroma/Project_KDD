@@ -17,12 +17,15 @@ public class PlayerController : MonoBehaviour {
     public float flyHeightModifier = 2f;
     [Range(0.1f,1f)]
     public float verticalGainDuration = 0.3f;
+    [Range(0.1f, 3f)]
+    public float fallTimeLimit = 1.5f;
 
     [Header("States")]
     public bool isFacingRight = true;
     public bool isDucking = false;
     public bool isSliding = false;
     public bool isInAir = false;
+    public bool isHighFall = false;
     public bool isJumping = false;
     public bool isFlying = false;
     public bool isInhaling = false;
@@ -52,6 +55,7 @@ public class PlayerController : MonoBehaviour {
     private float inhaleHitboxXPos = 0f;
     private float slideHitboxXPos = 0f;
     private float origPlayerHeight = 0f;
+    private float fallAirTime = 0f;
     private bool canExhale = true;
     private bool isMovingUpwards = false;
 
@@ -84,6 +88,7 @@ public class PlayerController : MonoBehaviour {
             {
                 JumpMovement();
                 HorizontalMovement();
+                Falling();
             }
 
             // If the player is ducking, they cannot inhale or exhale
@@ -144,14 +149,26 @@ public class PlayerController : MonoBehaviour {
     // Handles if the player hits an enemy or any specific objects
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-        if(collision.gameObject.tag == "Enemy" && isTakingDamage == false)
+        if(collision.gameObject.tag == "Enemy")
         {
-            playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
-            playerHealth.ActivateInvincibility();
-            isTakingDamage = true;
-            playerGraphics.ChangeSprite("isDamaged");
-            Invoke("StopDamageLook", 0.5f);
+            if(isHighFall == true && playerRB.position.y > collision.gameObject.GetComponent<Rigidbody2D>().position.y)
+            {
+                // The player damages the enemy only if they are in a high fall and are above the enemy
+                collision.gameObject.SetActive(false);
+                ResetHighFall();
+            }
+            else if(isTakingDamage == false)
+            {
+                // The player takes damage if they run into an enemy
+                playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
+                playerHealth.ActivateInvincibility();
+                ResetHighFall();
+                isTakingDamage = true;
+                playerGraphics.ChangeSprite("isDamaged");
+                Invoke("StopDamageLook", 0.5f);
+            }
         }
+
 	}
 
 	// Checks if the player is grounded
@@ -159,28 +176,39 @@ public class PlayerController : MonoBehaviour {
 	{
         if(CheckGrounded() == true  && isInAir == true)
         {
-            isJumping = false;
-            isInAir = false;
-
-            // If the player is flying, they automatically do an airpuff
-            if(isFlying == true)
+            if(isHighFall == true)
             {
-                GameObject spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
-                playerGraphics.ChangeSprite("isAirPuffing");
-                isExhaling = true;
-                if(isFacingRight == false)
-                {
-                    spawned.GetComponent<SpriteRenderer>().flipX = true;
-                }
-                Invoke("StopFlying", 0.1f);
+                // If the player lands on the ground while in a high fall, they will do a short hop
+                ResetHighFall();
+                isJumping = true;
+                isMovingUpwards = true;
+                Invoke("StopVerticalIncrease", 0.1f);
             }
-            else if(isInhaling == false)
+            else
             {
-                // Unless the player is inhaling, they will do a quick landing animation
-                isLanding = true;
-                if(IsInvoking("StopLandingAnimation") == false)
+                isJumping = false;
+                isInAir = false;
+
+                // If the player is flying, they automatically do an airpuff
+                if(isFlying == true)
                 {
-                    Invoke("StopLandingAnimation", 0.1f);
+                    GameObject spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
+                    playerGraphics.ChangeSprite("isAirPuffing");
+                    isExhaling = true;
+                    if(isFacingRight == false)
+                    {
+                        spawned.GetComponent<SpriteRenderer>().flipX = true;
+                    }
+                    Invoke("StopFlying", 0.1f);
+                }
+                else if(isInhaling == false)
+                {
+                    // Unless the player is inhaling, they will do a quick landing animation
+                    isLanding = true;
+                    if(IsInvoking("StopLandingAnimation") == false)
+                    {
+                        Invoke("StopLandingAnimation", 0.1f);
+                    }
                 }
             }
         }
@@ -247,8 +275,13 @@ public class PlayerController : MonoBehaviour {
             }
             else
             {
+                // Is the player in a long fall?
+                if(isHighFall == true)
+                {
+                    playerGraphics.ChangeSprite("isHighFall");
+                }
                 // Is the player puffing?
-                if(isFlying == true)
+                else if(isFlying == true)
                 {
                     playerGraphics.ChangeSprite("isFlying");
                 }
@@ -420,6 +453,7 @@ public class PlayerController : MonoBehaviour {
             else if(isInhaling == false)
             {
                 // Activates the inhale
+                ResetHighFall();
                 playerGraphics.ChangeSprite("isInhaling");
                 inhaleHitboxChild.SetActive(true);
                 isInhaling = true;
@@ -434,6 +468,33 @@ public class PlayerController : MonoBehaviour {
                 inhaleHitboxChild.SetActive(false);
                 isInhaling = false;
             }
+        }
+    }
+
+    // Handles the logic for falling long disitances
+    private void Falling()
+    {
+        if(isInAir == true && isStuffed == false)
+        {
+            // If the player is falling, they will eventually go into a falling animation
+            if(isJumping == false && isFlying == false)
+            {
+                fallAirTime += Time.deltaTime;
+                if(fallAirTime > fallTimeLimit && isHighFall == false)
+                {
+                    isHighFall = true;
+                }
+            }
+            else
+            {
+                // When the player is flying or jumping, the meter resets
+                ResetHighFall();
+            }
+        }
+        else
+        {
+            // When the player is on the ground or stuffed, the meter resets
+            ResetHighFall();
         }
     }
 
@@ -484,6 +545,16 @@ public class PlayerController : MonoBehaviour {
         slideHitboxChild.SetActive(false);
     }
 
+    // Resets the high falling status if the fallTimer hasn't already been reset
+    private void ResetHighFall()
+    {
+        if(FloatEquality(fallAirTime, 0) == true)
+        {
+            isHighFall = false;
+            fallAirTime = 0f;
+        }
+    }
+
     // Handles checking if two floats are equal. Returns false if they aren't equal
     private bool FloatEquality(float f1, float f2)
     {
@@ -509,11 +580,7 @@ public class PlayerController : MonoBehaviour {
                 RaycastHit2D hit = Physics2D.Raycast(groundCheckers[i].position, -Vector2.up, 0.1f);
                 if(hit == true)
                 {
-                    if(hit.collider.gameObject.tag == "Ground" && hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
-                    {
-                        return true;
-                    }
-                    else if(hit.collider.gameObject.tag == "Block")
+                    if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable") || hit.collider.gameObject.layer == LayerMask.NameToLayer("Destructable"))
                     {
                         return true;
                     }

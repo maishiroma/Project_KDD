@@ -23,6 +23,7 @@ public class PlayerGraphics : MonoBehaviour {
     public Sprite player_fly;
     public Sprite player_airpuffed;
     public Sprite player_airborn;
+    public Sprite player_longfall;
     public Sprite player_land;
     public Sprite player_damaged;
     public Sprite player_dead;
@@ -64,6 +65,9 @@ public class PlayerGraphics : MonoBehaviour {
                 break;
             case "isAirborn":   // When the player is in the air not jumping or flying
                 playerSprite.sprite = player_airborn;
+                break;
+            case "isHighFall":   // When the player is in the air for a long time and not jumping or flying
+                playerSprite.sprite = player_longfall;
                 break;
             case "isLanding":  // landed on the ground
                 playerSprite.sprite = player_land;

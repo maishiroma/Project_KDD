@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212067594630961336}
   - component: {fileID: 61899624223589102}
   - component: {fileID: 50337111264028526}
+  - component: {fileID: 114270585862221290}
   m_Layer: 0
   m_Name: TestEnemy
   m_TagString: Enemy
@@ -36,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1882758785545764}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.45, y: 0, z: 0}
+  m_LocalPosition: {x: -1.813216, y: 0.39, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -56,7 +57,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -87,6 +88,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &114270585862221290
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1882758785545764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e817ea1d280b94934bc3ce79177e09f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0
+  attackPower: 20
+  isFacingRight: 1
+  enemyRB: {fileID: 50337111264028526}
+  moveSetDisitance: 0
+  turnTime: 5
 --- !u!212 &212067594630961336
 SpriteRenderer:
   m_ObjectHideFlags: 1
