@@ -156,6 +156,9 @@ public class PlayerController : MonoBehaviour {
                 // The player damages the enemy only if they are in a high fall and are above the enemy
                 collision.gameObject.SetActive(false);
                 ResetHighFall();
+                isJumping = true;
+                isMovingUpwards = true;
+                Invoke("StopVerticalIncrease", 0.2f);
             }
             else if(isTakingDamage == false)
             {
@@ -248,7 +251,7 @@ public class PlayerController : MonoBehaviour {
             }
             else if(isInAir == false)
             {
-                // This takes priority over all other graphics
+                // Landing takes priority over all other graphics
                 if(isLanding == true)
                 {
                     playerGraphics.ChangeSprite("isLanding");
