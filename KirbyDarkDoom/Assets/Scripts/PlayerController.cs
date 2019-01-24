@@ -202,7 +202,7 @@ public class PlayerController : MonoBehaviour {
                 isMovingUpwards = true;
                 Invoke("StopVerticalIncrease", 0.2f);
             }
-            else if(isTakingDamage == false)
+            else if(isTakingDamage == false && playerHealth.isInvincible == false)
             {
                 // The player takes damage if they run into an enemy
                 playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);

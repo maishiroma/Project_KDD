@@ -61,10 +61,12 @@ public class DoorActions : MonoBehaviour {
         // Getting the proper components
         Rigidbody2D playerRB = player.GetComponent<Rigidbody2D>();
         PlayerController playerController = player.GetComponent<PlayerController>();
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
 
         // We stop the player from moving and fade to black
         playerRB.isKinematic = true;
         playerRB.velocity = Vector2.zero;
+        playerHealth.isInvincible = true;
         isFading = true;
         yield return new WaitForSeconds(fadeTime);
 
@@ -75,6 +77,7 @@ public class DoorActions : MonoBehaviour {
 
         // Then we enable the player to move and start fading back in
         playerRB.isKinematic = false;
+        playerHealth.isInvincible = false;
         isFading = false;
         yield return new WaitForSeconds(fadeTime);
 
