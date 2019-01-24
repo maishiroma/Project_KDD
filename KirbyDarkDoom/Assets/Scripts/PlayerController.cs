@@ -59,8 +59,50 @@ public class PlayerController : MonoBehaviour {
     private bool canExhale = true;
     private bool isMovingUpwards = false;
 
+    // Resets the player movement so that they are in their initial state
+    public void ResetPlayerMovement(bool faceRight)
+    {
+        // Reorientate player based on passed in boolean
+        if(faceRight == false)
+        {
+            isFacingRight = false;
+            playerGraphics.playerSprite.flipX = true;
+            playerRB.MoveRotation(180f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,inhaleHitboxChild.transform.localPosition.y);
+            slideHitboxChild.transform.localPosition = new Vector2(-slideHitboxXPos,slideHitboxChild.transform.localPosition.y);
+        }
+        else
+        {
+            isFacingRight = true;
+            playerGraphics.playerSprite.flipX = false;
+            playerRB.MoveRotation(-180f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,inhaleHitboxChild.transform.localPosition.y);
+            slideHitboxChild.transform.localPosition = new Vector2(slideHitboxXPos,slideHitboxChild.transform.localPosition.y);
+        }
+
+        // Depending on some states, we need to reset certain values
+        if(isDucking == true)
+        {
+            playerCollider.size = new Vector2(1,duckHeight);
+            playerCollider.offset = new Vector2(0,duckOffset);
+        }
+
+        // Calls all of the invoke methods to make sure all of the states are reset
+        ResetExhaleState();
+        EnableExhale();
+        StopVerticalIncrease();
+        StopFlying();
+        StopLandingAnimation();
+        StopDamageLook();
+        StopSliding();
+        ResetHighFall();
+
+        // We will presume the player is in the air
+        isInAir = true;
+    }
+
     // Saves some of the private variables using the passed in GameObjects
-    void Start()
+    private void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.localPosition.x;
         slideHitboxXPos = slideHitboxChild.transform.localPosition.x;
