@@ -16,7 +16,8 @@ public class InhaleHitbox : MonoBehaviour {
     private Rigidbody2D rbToInhale;
     private bool isInhalingObject;
 
-    // If a vaild object is in the inhale range, they will start to be dragged toward the player
+
+	// If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
         if(CheckIfInhalable(collision.gameObject.tag) == true)

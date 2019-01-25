@@ -75,7 +75,7 @@ public class PatrolEnemy : BaseEnemy
 	// Behavior when the enemy hits something
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable") || collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
+        if(collision.gameObject.tag == "Wall" || collision.gameObject.tag == "Block" || collision.gameObject.tag == "Enemy")
         {
             // If the enemy collides into a wall, block, or enemy, they will change directions
             TurnAround();

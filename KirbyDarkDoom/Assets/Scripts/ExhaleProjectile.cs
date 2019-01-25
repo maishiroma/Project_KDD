@@ -23,8 +23,8 @@ public class ExhaleProjectile : MonoBehaviour {
         moveSpeed *= Mathf.Sign(transform.localPosition.x);
     }
 
-    // The star will continuously move in a given direction
-    private void FixedUpdate()
+	// The star will continuously move in a given direction
+	private void FixedUpdate()
     {
         projectileRB.MovePosition(projectileRB.position + new Vector2(moveSpeed, 0));
     }

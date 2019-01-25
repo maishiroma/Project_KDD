@@ -64,8 +64,7 @@ public class DoorActions : MonoBehaviour {
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
 
         // We stop the player from moving and fade to black
-        playerRB.isKinematic = true;
-        playerRB.velocity = Vector2.zero;
+        GameManager.Instance.PauseGame();
         playerHealth.isInvincible = true;
         isFading = true;
         yield return new WaitForSeconds(fadeTime);
@@ -76,7 +75,7 @@ public class DoorActions : MonoBehaviour {
         yield return new WaitForFixedUpdate();
 
         // Then we enable the player to move and start fading back in
-        playerRB.isKinematic = false;
+        GameManager.Instance.ResumeGame(false);
         playerHealth.isInvincible = false;
         isFading = false;
         yield return new WaitForSeconds(fadeTime);

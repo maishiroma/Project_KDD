@@ -18,6 +18,26 @@ public abstract class BaseEnemy : MonoBehaviour {
     [Header("Base Component References")]
     public Rigidbody2D enemyRB;
 
+    // Private Variables
+    private Vector2 origVelocity;
+
+    // This stops the enemy from moving, saving its original velocity
+    public void StopEnemy()
+    {
+        origVelocity = enemyRB.velocity;
+        enemyRB.velocity = Vector2.zero;
+        enemyRB.isKinematic = true;
+        this.enabled = false;
+    }
+
+    // This resumes enemy movement
+    public void ResumeEnemy()
+    {
+        enemyRB.velocity = origVelocity;
+        enemyRB.isKinematic = false;
+        this.enabled = true;
+    }
+
     /* Absract Methods */
     public abstract void Move();
 }

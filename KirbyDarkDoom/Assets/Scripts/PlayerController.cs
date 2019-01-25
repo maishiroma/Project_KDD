@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour {
     public Transform[] groundCheckers = new Transform[3];
 
     // Private variables
+    private Vector2 origVelocity = Vector2.zero;
     private float origGravity = 0f;
     private float currHorizSpeed = 0f;
     private float horizInput = 0f;
@@ -99,6 +100,26 @@ public class PlayerController : MonoBehaviour {
 
         // We will presume the player is in the air
         isInAir = true;
+    }
+
+    // This stops the player from moving, saving its original velocity
+    public void StopPlayer()
+    {
+        origVelocity = playerRB.velocity;
+        this.enabled = false;
+        playerRB.isKinematic = true;
+        playerRB.velocity = Vector2.zero;
+    }
+
+    // This resumes player movement, with an option to use its orignal velocity
+    public void ResumePlayer(bool useOrigVelocity)
+    {
+        if(useOrigVelocity)
+        {
+            playerRB.velocity = origVelocity;
+        }
+        this.enabled = true;
+        playerRB.isKinematic = false;
     }
 
     // Saves some of the private variables using the passed in GameObjects
