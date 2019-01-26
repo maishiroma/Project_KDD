@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class SlideHitbox : MonoBehaviour {
 
+    [Header("General Variables")]
+    public float slideAttackPower = 20f;
+
 	[Header("External Components")]
     public PlayerController player;
 
@@ -16,7 +19,7 @@ public class SlideHitbox : MonoBehaviour {
         if(collision.gameObject.tag == "Enemy")
         {
             // Defeat the enemy and stop the slide
-            collision.gameObject.SetActive(false);
+            collision.gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(slideAttackPower);
             player.isSliding = false;
             gameObject.SetActive(false);
         }

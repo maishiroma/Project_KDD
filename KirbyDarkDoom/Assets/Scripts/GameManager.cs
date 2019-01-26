@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour {
 
     // Private Variables
     private bool gamePause = false;  // Is the game currently paused?
+    private NormalEnemyHealth[] listOfAllEnemiesInLevel;    // Keeps track of all of the enemies in the level
 
     // Static Variables
     public static GameManager Instance;
@@ -37,6 +38,26 @@ public class GameManager : MonoBehaviour {
         }
 	}
 
+    // We tell this GameObject to listen for new scene changes
+	private void OnEnable()
+	{
+        SceneManager.sceneLoaded += OnLevelFinishedLoading;
+	}
+
+    // If for any reason our GameManger is disabled, we make sure we stop listening for new level changes
+	private void OnDisable()
+	{
+        SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+	}
+
+    // This function is called when the GameManager detects a new scene
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        // We take all of the enemies that are in the level and save their references
+        // TODO: This might be sloppy, may need to refine depending on player's location
+        listOfAllEnemiesInLevel = FindObjectsOfType<NormalEnemyHealth>();
+    }
+
 	// Takes the player to the GameOver Screen
 	public void GoToGameOver()
     {
@@ -56,7 +77,7 @@ public class GameManager : MonoBehaviour {
             currProjectile.enabled = false;
         }
 
-        if(FindObjectOfType<InhaleHitbox>() != null)
+        if(FindObjectOfType<PlayerController>() != null)
         {
             FindObjectOfType<PlayerController>().StopPlayer();
         }
@@ -67,19 +88,19 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    // Does the opposite of PauseGame, but has the option to give the player their og velicity back
-    public void ResumeGame(bool usePlayerOrigVelocity)
+    // Does the opposite of PauseGame, but has the option to give the player and enemies their og velicity back
+    public void ResumeGame(bool usePlayerOrigVelocity, bool useEnemiesOrigVelocity)
     {
         foreach(BaseEnemy currEnemy in FindObjectsOfType<BaseEnemy>())
         {
-            currEnemy.ResumeEnemy();
+            currEnemy.ResumeEnemy(useEnemiesOrigVelocity);
         }
         foreach(ExhaleProjectile currProjectile in FindObjectsOfType<ExhaleProjectile>())
         {
             currProjectile.enabled = true;
         }
 
-        if(FindObjectOfType<InhaleHitbox>() != null)
+        if(FindObjectOfType<PlayerController>() != null)
         {
             FindObjectOfType<PlayerController>().ResumePlayer(usePlayerOrigVelocity);
         }
@@ -87,6 +108,15 @@ public class GameManager : MonoBehaviour {
         if(FindObjectOfType<InhaleHitbox>() != null)
         {
             FindObjectOfType<InhaleHitbox>().enabled = true;
+        }
+    }
+
+    // Respawns all of the enemies in the current level
+    public void RespawnAllEnemies()
+    {
+        foreach(NormalEnemyHealth currEnemy in listOfAllEnemiesInLevel)
+        {
+            currEnemy.Respawn();
         }
     }
 }

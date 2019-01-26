@@ -34,16 +34,23 @@ public class ExhaleProjectile : MonoBehaviour {
 	{
         if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
         {
+            // Projectile is destroyed if it runs into an indestructible object
             DestroyProjectile();
         }
         else if(collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
         {
-            if(collision.tag == "Enemy" || collision.tag == "Block")
+            if(collision.gameObject.tag == "Enemy")
             {
-                // The target is defeated!
-                collision.gameObject.SetActive(false);
-                DestroyProjectile();
+                // Enemy takes damage
+                collision.gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(damagePower);
             }
+            else if(collision.gameObject.tag == "Block")
+            {
+                // The block is destroyed
+                collision.gameObject.SetActive(false);
+            }
+            // Whatever the projectile runs into here, it will get destroyed
+            DestroyProjectile();
         }
 	}
 

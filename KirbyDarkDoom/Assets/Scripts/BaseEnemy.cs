@@ -30,10 +30,13 @@ public abstract class BaseEnemy : MonoBehaviour {
         this.enabled = false;
     }
 
-    // This resumes enemy movement
-    public void ResumeEnemy()
+    // This resumes enemy movement, with the option to use its saved velocity
+    public void ResumeEnemy(bool useOrigVelocity)
     {
-        enemyRB.velocity = origVelocity;
+        if(useOrigVelocity == true)
+        {
+            enemyRB.velocity = origVelocity;
+        }
         enemyRB.isKinematic = false;
         this.enabled = true;
     }

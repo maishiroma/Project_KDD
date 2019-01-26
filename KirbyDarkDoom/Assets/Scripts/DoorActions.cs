@@ -69,13 +69,14 @@ public class DoorActions : MonoBehaviour {
         isFading = true;
         yield return new WaitForSeconds(fadeTime);
 
-        // We then teleport the player
+        // We then teleport the player and reset all of the enemies to their initial locations
         playerRB.position = travelSpot.position;
         playerController.ResetPlayerMovement(makePlayerFaceRight);
+        GameManager.Instance.RespawnAllEnemies();
         yield return new WaitForFixedUpdate();
 
         // Then we enable the player to move and start fading back in
-        GameManager.Instance.ResumeGame(false);
+        GameManager.Instance.ResumeGame(false, false);
         playerHealth.isInvincible = false;
         isFading = false;
         yield return new WaitForSeconds(fadeTime);

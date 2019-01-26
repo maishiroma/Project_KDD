@@ -42,10 +42,12 @@ public class PatrolEnemy : BaseEnemy
         }
     }
 
-    // Initializes the TurnAroundRepeater, which will make the enemy turn around automatically after X seconds
-	private void Start()
-	{
-        origGravity = enemyRB.gravityScale;
+    // When starting up, we reset all of the enemy statuses
+    private void OnEnable()
+    {
+        isMovingUp = false;
+        enemyRB.velocity = Vector2.zero;
+
         if(moveSetDisitance == true)
         {
             InvokeRepeating("TurnAround", turnTime, turnTime);
@@ -55,9 +57,21 @@ public class PatrolEnemy : BaseEnemy
         {
             InvokeRepeating("ToggleFlying", verticalTimer, verticalTimer);
         }
+    }
+
+    // When the enemy is defeated, all invokes are canceled
+    private void OnDisable()
+    {
+        CancelInvoke();
+    }
+
+    // Initializes the TurnAroundRepeater, which will make the enemy turn around automatically after X seconds
+	private void Start()
+	{
+        origGravity = enemyRB.gravityScale;
 	}
 
-    // This method is used to verify that the values in the inspector are valid
+	// This method is used to verify that the values in the inspector are valid
 	[ExecuteInEditMode]
     private void OnValidate()
     {
@@ -83,7 +97,9 @@ public class PatrolEnemy : BaseEnemy
         else if(collision.gameObject.tag == "Player")
         {
             // Enemy is defeated, but player also takes damage, which is handled in PlayerController
-            gameObject.SetActive(false);
+            // For now, when the player runs into an enemy, the enemy takes half of its max health damage
+            float halfHealth = gameObject.GetComponent<NormalEnemyHealth>().maxHealth / 2f;
+            gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(halfHealth);
         }
 	}
 

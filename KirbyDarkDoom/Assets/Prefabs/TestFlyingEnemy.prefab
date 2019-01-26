@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 61171964913054414}
   - component: {fileID: 50430984366170596}
   - component: {fileID: 114873784984551542}
+  - component: {fileID: 114599326692002048}
   m_Layer: 9
   m_Name: TestFlyingEnemy
   m_TagString: Enemy
@@ -88,6 +89,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &114599326692002048
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1998890575695690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32f45ba4abf6a420e83e90b78dcbf1a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 20
+  isInvincible: 0
+  invincibilityTime: 2
+  entitySpriteRender: {fileID: 212442004818094434}
 --- !u!114 &114873784984551542
 MonoBehaviour:
   m_ObjectHideFlags: 1

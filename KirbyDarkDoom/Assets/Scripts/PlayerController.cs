@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     public float flyingGravity = 0.5f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
+    public float highFallPower = 20f;
     [Range(0.1f, 1f)]
     public float slideRange = 0.1f;
     [Range(0.5f, 5f)]
@@ -100,6 +101,9 @@ public class PlayerController : MonoBehaviour {
 
         // We will presume the player is in the air
         isInAir = true;
+
+        // And nothing is in the player's mouth
+        isStuffed = false;
     }
 
     // This stops the player from moving, saving its original velocity
@@ -217,7 +221,7 @@ public class PlayerController : MonoBehaviour {
             if(isHighFall == true && playerRB.position.y > collision.gameObject.GetComponent<Rigidbody2D>().position.y)
             {
                 // The player damages the enemy only if they are in a high fall and are above the enemy
-                collision.gameObject.SetActive(false);
+                collision.gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(highFallPower);
                 ResetHighFall();
                 isJumping = true;
                 isMovingUpwards = true;
