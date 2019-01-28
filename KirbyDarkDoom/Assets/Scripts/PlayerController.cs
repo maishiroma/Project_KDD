@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour {
     public float flyingGravity = 0.5f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
+    public float highFallPower = 20f;
     [Range(0.1f, 1f)]
     public float slideRange = 0.1f;
     [Range(0.5f, 5f)]
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour {
     public Transform[] groundCheckers = new Transform[3];
 
     // Private variables
+    private Vector2 origVelocity = Vector2.zero;
     private float origGravity = 0f;
     private float currHorizSpeed = 0f;
     private float horizInput = 0f;
@@ -59,8 +61,73 @@ public class PlayerController : MonoBehaviour {
     private bool canExhale = true;
     private bool isMovingUpwards = false;
 
+    // Resets the player movement so that they are in their initial state
+    public void ResetPlayerMovement(bool faceRight)
+    {
+        // Reorientate player based on passed in boolean
+        if(faceRight == false)
+        {
+            isFacingRight = false;
+            playerGraphics.playerSprite.flipX = true;
+            playerRB.MoveRotation(180f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(-inhaleHitboxXPos,inhaleHitboxChild.transform.localPosition.y);
+            slideHitboxChild.transform.localPosition = new Vector2(-slideHitboxXPos,slideHitboxChild.transform.localPosition.y);
+        }
+        else
+        {
+            isFacingRight = true;
+            playerGraphics.playerSprite.flipX = false;
+            playerRB.MoveRotation(-180f);
+            inhaleHitboxChild.transform.localPosition = new Vector2(inhaleHitboxXPos,inhaleHitboxChild.transform.localPosition.y);
+            slideHitboxChild.transform.localPosition = new Vector2(slideHitboxXPos,slideHitboxChild.transform.localPosition.y);
+        }
+
+        // Depending on some states, we need to reset certain values
+        if(isDucking == true)
+        {
+            playerCollider.size = new Vector2(1,duckHeight);
+            playerCollider.offset = new Vector2(0,duckOffset);
+        }
+
+        // Calls all of the invoke methods to make sure all of the states are reset
+        ResetExhaleState();
+        EnableExhale();
+        StopVerticalIncrease();
+        StopFlying();
+        StopLandingAnimation();
+        StopDamageLook();
+        StopSliding();
+        ResetHighFall();
+
+        // We will presume the player is in the air
+        isInAir = true;
+
+        // And nothing is in the player's mouth
+        isStuffed = false;
+    }
+
+    // This stops the player from moving, saving its original velocity
+    public void StopPlayer()
+    {
+        origVelocity = playerRB.velocity;
+        this.enabled = false;
+        playerRB.isKinematic = true;
+        playerRB.velocity = Vector2.zero;
+    }
+
+    // This resumes player movement, with an option to use its orignal velocity
+    public void ResumePlayer(bool useOrigVelocity)
+    {
+        if(useOrigVelocity)
+        {
+            playerRB.velocity = origVelocity;
+        }
+        this.enabled = true;
+        playerRB.isKinematic = false;
+    }
+
     // Saves some of the private variables using the passed in GameObjects
-    void Start()
+    private void Start()
     {
         inhaleHitboxXPos = inhaleHitboxChild.transform.localPosition.x;
         slideHitboxXPos = slideHitboxChild.transform.localPosition.x;
@@ -154,13 +221,13 @@ public class PlayerController : MonoBehaviour {
             if(isHighFall == true && playerRB.position.y > collision.gameObject.GetComponent<Rigidbody2D>().position.y)
             {
                 // The player damages the enemy only if they are in a high fall and are above the enemy
-                collision.gameObject.SetActive(false);
+                collision.gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(highFallPower);
                 ResetHighFall();
                 isJumping = true;
                 isMovingUpwards = true;
                 Invoke("StopVerticalIncrease", 0.2f);
             }
-            else if(isTakingDamage == false)
+            else if(isTakingDamage == false && playerHealth.isInvincible == false)
             {
                 // The player takes damage if they run into an enemy
                 playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
