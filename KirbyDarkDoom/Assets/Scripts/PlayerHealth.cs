@@ -2,6 +2,8 @@
  * 
  */
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerHealth : BaseHealth
 {
@@ -11,6 +13,10 @@ public class PlayerHealth : BaseHealth
     [Header("Sub Components")]
     public Rigidbody2D playerRB;
     public BoxCollider2D playerHitBox;
+
+    [Header("UI References")]
+    public Slider health_UI;
+    public TextMeshProUGUI life_UI;
 
     // Private variables
     private bool isDying = false;
@@ -47,6 +53,8 @@ public class PlayerHealth : BaseHealth
             base.Respawn();
 
             // we reset the player's variables back to normal
+            // This is done so that the player is in front of everything
+            playerRB.transform.position += new Vector3(0,0,-5f);
             playerRB.rotation = 0f;
             isDying = false;
             playerHitBox.enabled = true;
@@ -65,5 +73,9 @@ public class PlayerHealth : BaseHealth
 	private void Update()
 	{
         DyingAction();
+
+        // Also updates the UI accordingly
+        health_UI.value = CurrentHealth;
+        life_UI.text = "x " + numbOfLives;
 	}
 }
