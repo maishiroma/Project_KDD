@@ -97,9 +97,7 @@ public class PatrolEnemy : BaseEnemy
         else if(collision.gameObject.tag == "Player")
         {
             // Enemy is defeated, but player also takes damage, which is handled in PlayerController
-            // For now, when the player runs into an enemy, the enemy takes half of its max health damage
-            float halfHealth = gameObject.GetComponent<NormalEnemyHealth>().maxHealth / 2f;
-            gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(halfHealth);
+            gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(gameObject.GetComponent<NormalEnemyHealth>().maxHealth);
         }
 	}
 

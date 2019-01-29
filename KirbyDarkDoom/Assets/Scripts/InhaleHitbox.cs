@@ -8,6 +8,10 @@ using UnityEngine;
 
 public class InhaleHitbox : MonoBehaviour {
 
+    [Header("General Variables")]
+    [Range(0.1f,1f)]
+    public float inhalePower = 0.1f;
+
     [Header("Outside References")]
     public Rigidbody2D playerRB;
     public PlayerController playerController;
@@ -15,7 +19,6 @@ public class InhaleHitbox : MonoBehaviour {
     //Private Variables
     private Rigidbody2D rbToInhale;
     private bool isInhalingObject;
-
 
 	// If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -41,11 +44,11 @@ public class InhaleHitbox : MonoBehaviour {
             // Depending on whether or not the object has a RB, we determine how we check its position
             if(rbToInhale != null)
             {
-                newPos = Vector2.MoveTowards(rbToInhale.position, playerRB.position, 0.1f);
+                newPos = Vector2.MoveTowards(rbToInhale.position, playerRB.position, inhalePower);
             }
             else
             {
-                newPos = Vector2.MoveTowards(collision.transform.position, playerRB.position, 0.1f);
+                newPos = Vector2.MoveTowards(collision.transform.position, playerRB.position, inhalePower);
             }
 
             // If the object is close to the player while they are being inhaled, they will make the player stuffed
