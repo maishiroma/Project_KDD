@@ -242,9 +242,9 @@ public class PlayerController : MonoBehaviour {
             else if(isTakingDamage == false && playerHealth.isInvincible == false)
             {
                 // The player takes damage if they run into an enemy
+                ResetPlayerMovement(isFacingRight);
                 playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
                 playerHealth.ActivateInvincibility();
-                ResetHighFall();
                 isTakingDamage = true;
                 playerGraphics.ChangeSprite("isDamaged");
                 Invoke("StopDamageLook", resetDamageLookTimer);

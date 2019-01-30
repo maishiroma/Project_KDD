@@ -54,11 +54,20 @@ public class InhaleHitbox : MonoBehaviour {
             // If the object is close to the player while they are being inhaled, they will make the player stuffed
             if(Vector2.Distance(playerRB.position, newPos) <= 1f)
             {
-                playerController.playerGraphics.ChangeSprite("isStuffed");
-                playerController.isStuffed = true;
+                if(collision.gameObject.tag == "Collectible")
+                {
+                    // If the player inhales a collectible, they will collect it.
+                    collision.gameObject.GetComponent<Collectible>().CollectCollectible(playerController.playerHealth);
+                }
+                else
+                {
+                    playerController.playerGraphics.ChangeSprite("isStuffed");
+                    playerController.isStuffed = true;
+                    collision.gameObject.SetActive(false);
+                }
+
                 playerController.isInhaling = false;
                 gameObject.SetActive(false);
-                collision.gameObject.SetActive(false);
                 rbToInhale = null;
                 isInhalingObject = false;
             }
@@ -83,6 +92,7 @@ public class InhaleHitbox : MonoBehaviour {
         {
             case "Enemy":
             case "Block":
+            case "Collectible":
                 return true;
         }
         return false;
