@@ -6,20 +6,32 @@ public class PlayerController : MonoBehaviour {
 
     // Public Variables
     [Header("General Variables")]
-    public float moveSpeed = 20f;
+    public float groundMoveSpeed = 20f;
+    public float airMoveSpeed = 10f;
     public float jumpPower = 60f;
+    public float flyPower = 30f;
     public float flyingGravity = 0.5f;
     public float duckOffset = -0.22f;
     public float duckHeight = 0.5f;
     public float highFallPower = 20f;
     [Range(0.1f, 1f)]
-    public float slideRange = 0.1f;
-    [Range(0.5f, 5f)]
-    public float flyHeightModifier = 2f;
-    [Range(0.1f,1f)]
-    public float verticalGainDuration = 0.3f;
+    public float slideSpeed = 0.1f;
     [Range(0.1f, 3f)]
-    public float fallTimeLimit = 1.5f;
+    public float timeToHighFall = 1.5f;
+
+    [Header("Invoke Timers")]
+    [Range(0.1f,1f)]
+    public float exhaleResetTimer = 0.3f;
+    [Range(0.1f,1f)]
+    public float resetDamageLookTimer = 0.5f;
+    [Range(0.1f,1f)]
+    public float jumpGainTimer = 0.3f; 
+    [Range(0.1f,1f)]
+    public float flyGainTimer = 0.2f;
+    [Range(0.1f, 1f)]
+    public float highFallBounceTimer = 0.2f;
+    [Range(0.1f, 1f)]
+    public float slideTimer = 0.2f;
 
     [Header("States")]
     public bool isFacingRight = true;
@@ -189,7 +201,7 @@ public class PlayerController : MonoBehaviour {
                     if(isFlying == true)
                     {
                         // If the player is in the air, they can do "mini" jumps
-                        playerRB.AddForce(Vector2.ClampMagnitude(transform.up * jumpPower, jumpPower / 3f));
+                        playerRB.AddForce(Vector2.ClampMagnitude(transform.up * flyPower, flyPower));
                     }
                     else if(isJumping == true)
                     {
@@ -203,11 +215,11 @@ public class PlayerController : MonoBehaviour {
                 // Sliding movement
                 if(isFacingRight == true)
                 {
-                    playerRB.MovePosition(playerRB.position + new Vector2(slideRange,0));
+                    playerRB.MovePosition(playerRB.position + new Vector2(slideSpeed,0));
                 }
                 else
                 {
-                    playerRB.MovePosition(playerRB.position + new Vector2(-slideRange,0));
+                    playerRB.MovePosition(playerRB.position + new Vector2(-slideSpeed,0));
                 }
             }
         }
@@ -225,17 +237,17 @@ public class PlayerController : MonoBehaviour {
                 ResetHighFall();
                 isJumping = true;
                 isMovingUpwards = true;
-                Invoke("StopVerticalIncrease", 0.2f);
+                Invoke("StopVerticalIncrease", highFallBounceTimer);
             }
             else if(isTakingDamage == false && playerHealth.isInvincible == false)
             {
                 // The player takes damage if they run into an enemy
+                ResetPlayerMovement(isFacingRight);
                 playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
                 playerHealth.ActivateInvincibility();
-                ResetHighFall();
                 isTakingDamage = true;
                 playerGraphics.ChangeSprite("isDamaged");
-                Invoke("StopDamageLook", 0.5f);
+                Invoke("StopDamageLook", resetDamageLookTimer);
             }
         }
 
@@ -252,7 +264,7 @@ public class PlayerController : MonoBehaviour {
                 ResetHighFall();
                 isJumping = true;
                 isMovingUpwards = true;
-                Invoke("StopVerticalIncrease", 0.1f);
+                Invoke("StopVerticalIncrease", highFallBounceTimer);
             }
             else
             {
@@ -269,7 +281,7 @@ public class PlayerController : MonoBehaviour {
                     {
                         spawned.GetComponent<SpriteRenderer>().flipX = true;
                     }
-                    Invoke("StopFlying", 0.1f);
+                    Invoke("StopFlying", exhaleResetTimer);
                 }
                 else if(isInhaling == false)
                 {
@@ -373,11 +385,11 @@ public class PlayerController : MonoBehaviour {
     {
         if(isInAir == true)
         {
-            horizInput = Input.GetAxis("Horizontal") * (moveSpeed / 4f);
+            horizInput = Input.GetAxis("Horizontal") * airMoveSpeed;
         }
         else
         {
-            horizInput = Input.GetAxis("Horizontal") * moveSpeed;
+            horizInput = Input.GetAxis("Horizontal") * groundMoveSpeed;
         }
 
         // Rotates the player to face left
@@ -421,7 +433,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     isSliding = true;
                     slideHitboxChild.SetActive(true);
-                    Invoke("StopSliding", 0.2f);
+                    Invoke("StopSliding", slideTimer);
                 }
             }
         }
@@ -450,7 +462,7 @@ public class PlayerController : MonoBehaviour {
                 // This is done so that the player will stop moving upward after X seconds
                 if(IsInvoking("StopVerticalIncrease") == false)
                 {
-                    Invoke("StopVerticalIncrease", verticalGainDuration);
+                    Invoke("StopVerticalIncrease", jumpGainTimer);
                 }
             }
             else
@@ -466,7 +478,7 @@ public class PlayerController : MonoBehaviour {
                     // This is done so that the player will stop moving upward after X seconds
                     if(IsInvoking("StopVerticalIncrease") == false)
                     {
-                        Invoke("StopVerticalIncrease", verticalGainDuration);
+                        Invoke("StopVerticalIncrease", flyGainTimer);
                     }
                 }
             }
@@ -489,7 +501,7 @@ public class PlayerController : MonoBehaviour {
                     playerGraphics.ChangeSprite("isExhaling");
                     isStuffed = false;
                     isExhaling = true;
-                    Invoke("ResetExhaleState", 0.3f);
+                    Invoke("ResetExhaleState", exhaleResetTimer);
                 }
                 // Exhales out an airpuff if the player is flying
                 else if(isFlying == true)
@@ -497,7 +509,7 @@ public class PlayerController : MonoBehaviour {
                     spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
                     playerGraphics.ChangeSprite("isAirPuffing");
                     isExhaling = true;
-                    Invoke("StopFlying", 0.1f);
+                    Invoke("StopFlying", exhaleResetTimer);
                 }
 
                 // Makes sure the projectile is facing in the direction the player is facing
@@ -517,7 +529,7 @@ public class PlayerController : MonoBehaviour {
             {
                 // We prevent the player from immediatly activating the exhale
                 canExhale = false;
-                Invoke("EnableExhale", 0.1f);
+                Invoke("EnableExhale", exhaleResetTimer);
                 return;
             }
             else if(isInhaling == false)
@@ -550,7 +562,7 @@ public class PlayerController : MonoBehaviour {
             if(isJumping == false && isFlying == false)
             {
                 fallAirTime += Time.deltaTime;
-                if(fallAirTime > fallTimeLimit && isHighFall == false)
+                if(fallAirTime > timeToHighFall && isHighFall == false)
                 {
                     isHighFall = true;
                 }

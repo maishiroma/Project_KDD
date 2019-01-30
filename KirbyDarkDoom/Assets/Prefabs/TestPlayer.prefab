@@ -175,7 +175,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1911324619482096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.73, y: 4.03, z: -5}
+  m_LocalPosition: {x: 5.53, y: 0.95, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4026503298272692}
@@ -305,6 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dce288e2db8054dda87413ea250de0c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slideAttackPower: 20
   player: {fileID: 114461392090596268}
 --- !u!114 &114348740542431684
 MonoBehaviour:
@@ -344,15 +345,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 085d6ee73a9ad4021bea8891f3558722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 35
-  jumpPower: 120
+  groundMoveSpeed: 40
+  airMoveSpeed: 10
+  jumpPower: 150
+  flyPower: 30
   flyingGravity: 0.7
   duckOffset: -0.16
   duckHeight: 0.67
-  slideRange: 0.2
-  flyHeightModifier: 1.5
-  verticalGainDuration: 0.3
-  fallTimeLimit: 1.1
+  highFallPower: 20
+  slideSpeed: 0.2
+  timeToHighFall: 1
+  exhaleResetTimer: 0.3
+  resetDamageLookTimer: 0.5
+  jumpGainTimer: 0.2
+  flyGainTimer: 0.3
+  highFallBounceTimer: 0.1
+  slideTimer: 0.2
   isFacingRight: 1
   isDucking: 0
   isSliding: 0
@@ -397,6 +405,8 @@ MonoBehaviour:
   numbOfLives: 3
   playerRB: {fileID: 50819204955772002}
   playerHitBox: {fileID: 61009220270228268}
+  health_UI: {fileID: 0}
+  life_UI: {fileID: 0}
 --- !u!114 &114868753932337642
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -408,6 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62b1a1dae022b4d99b9e556241a022e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inhalePower: 0.3
   playerRB: {fileID: 50819204955772002}
   playerController: {fileID: 114461392090596268}
 --- !u!212 &212096583751023308

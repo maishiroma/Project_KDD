@@ -8,6 +8,10 @@ using UnityEngine;
 
 public class InhaleHitbox : MonoBehaviour {
 
+    [Header("General Variables")]
+    [Range(0.1f,1f)]
+    public float inhalePower = 0.1f;
+
     [Header("Outside References")]
     public Rigidbody2D playerRB;
     public PlayerController playerController;
@@ -15,7 +19,6 @@ public class InhaleHitbox : MonoBehaviour {
     //Private Variables
     private Rigidbody2D rbToInhale;
     private bool isInhalingObject;
-
 
 	// If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -41,21 +44,30 @@ public class InhaleHitbox : MonoBehaviour {
             // Depending on whether or not the object has a RB, we determine how we check its position
             if(rbToInhale != null)
             {
-                newPos = Vector2.MoveTowards(rbToInhale.position, playerRB.position, 0.1f);
+                newPos = Vector2.MoveTowards(rbToInhale.position, playerRB.position, inhalePower);
             }
             else
             {
-                newPos = Vector2.MoveTowards(collision.transform.position, playerRB.position, 0.1f);
+                newPos = Vector2.MoveTowards(collision.transform.position, playerRB.position, inhalePower);
             }
 
             // If the object is close to the player while they are being inhaled, they will make the player stuffed
             if(Vector2.Distance(playerRB.position, newPos) <= 1f)
             {
-                playerController.playerGraphics.ChangeSprite("isStuffed");
-                playerController.isStuffed = true;
+                if(collision.gameObject.tag == "Collectible")
+                {
+                    // If the player inhales a collectible, they will collect it.
+                    collision.gameObject.GetComponent<Collectible>().CollectCollectible(playerController.playerHealth);
+                }
+                else
+                {
+                    playerController.playerGraphics.ChangeSprite("isStuffed");
+                    playerController.isStuffed = true;
+                    collision.gameObject.SetActive(false);
+                }
+
                 playerController.isInhaling = false;
                 gameObject.SetActive(false);
-                collision.gameObject.SetActive(false);
                 rbToInhale = null;
                 isInhalingObject = false;
             }
@@ -80,6 +92,7 @@ public class InhaleHitbox : MonoBehaviour {
         {
             case "Enemy":
             case "Block":
+            case "Collectible":
                 return true;
         }
         return false;

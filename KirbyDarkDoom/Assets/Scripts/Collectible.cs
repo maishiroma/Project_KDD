@@ -36,7 +36,15 @@ public class Collectible : MonoBehaviour {
         if(collision.gameObject.tag == "Player")
         {
             PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+            CollectCollectible(player);
+        }
+	}
 
+    // Collect the collectible and deactivate it
+    public void CollectCollectible(PlayerHealth player)
+    {
+        if(gameObject.activeInHierarchy == true)
+        {
             // Dependin on the collectible's function, we do various things
             switch(typeOfCollectible)
             {
@@ -49,5 +57,5 @@ public class Collectible : MonoBehaviour {
             }
             gameObject.SetActive(false);
         }
-	}
+    }
 }

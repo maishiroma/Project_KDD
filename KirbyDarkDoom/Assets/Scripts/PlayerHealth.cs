@@ -69,7 +69,7 @@ public class PlayerHealth : BaseHealth
         }
     }
 
-    // Constantly checks if the player is dead
+	// Constantly checks if the player is dead
 	private void Update()
 	{
         DyingAction();

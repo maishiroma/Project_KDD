@@ -89,17 +89,18 @@ public class PatrolEnemy : BaseEnemy
 	// Behavior when the enemy hits something
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-        if(collision.gameObject.tag == "Wall" || collision.gameObject.tag == "Block" || collision.gameObject.tag == "Enemy")
-        {
-            // If the enemy collides into a wall, block, or enemy, they will change directions
-            TurnAround();
-        }
-        else if(collision.gameObject.tag == "Player")
+        if(collision.gameObject.tag == "Player")
         {
             // Enemy is defeated, but player also takes damage, which is handled in PlayerController
-            // For now, when the player runs into an enemy, the enemy takes half of its max health damage
-            float halfHealth = gameObject.GetComponent<NormalEnemyHealth>().maxHealth / 2f;
-            gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(halfHealth);
+            gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(gameObject.GetComponent<NormalEnemyHealth>().maxHealth);
+        }
+        else if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable") || collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
+        {
+            // If the enemy collides into a wall, block, or enemy, they will change directions
+            if(IsInvoking("TurnAround") == false)
+            {
+                Invoke("TurnAround", 0.1f);
+            }
         }
 	}
 
