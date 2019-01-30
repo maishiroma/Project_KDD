@@ -403,6 +403,7 @@ MonoBehaviour:
   invincibilityTime: 2
   entitySpriteRender: {fileID: 212156262353481102}
   numbOfLives: 3
+  playerController: {fileID: 114461392090596268}
   playerRB: {fileID: 50819204955772002}
   playerHitBox: {fileID: 61009220270228268}
   health_UI: {fileID: 0}

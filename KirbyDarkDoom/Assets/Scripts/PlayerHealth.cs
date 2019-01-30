@@ -11,6 +11,7 @@ public class PlayerHealth : BaseHealth
     public int numbOfLives = 3;
 
     [Header("Sub Components")]
+    public PlayerController playerController;
     public Rigidbody2D playerRB;
     public BoxCollider2D playerHitBox;
 
@@ -54,6 +55,7 @@ public class PlayerHealth : BaseHealth
 
             // we reset the player's variables back to normal
             // This is done so that the player is in front of everything
+            playerController.ResetPlayerMovement(playerController.isFacingRight);
             playerRB.transform.position += new Vector3(0,0,-5f);
             playerRB.rotation = 0f;
             isDying = false;

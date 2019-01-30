@@ -117,6 +117,9 @@ public class PlayerController : MonoBehaviour {
 
         // And nothing is in the player's mouth
         isStuffed = false;
+
+        // And reset their speed to be 0
+        playerRB.velocity = Vector2.zero;
     }
 
     // This stops the player from moving, saving its original velocity
