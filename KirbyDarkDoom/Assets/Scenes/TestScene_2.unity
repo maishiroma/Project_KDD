@@ -505,7 +505,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4825957112730308, guid: c5972ad33a0c9410185f7b42c10de794, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 4825957112730308, guid: c5972ad33a0c9410185f7b42c10de794, type: 2}
       propertyPath: m_LocalRotation.x
@@ -746,6 +746,64 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1001 &733077683
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 9.353206
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.5297403
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4279900233308310, guid: 31c868277f203414ca337849258295bb, type: 2}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114729666768961980, guid: 31c868277f203414ca337849258295bb,
+        type: 2}
+      propertyPath: isGoalDoor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114729666768961980, guid: 31c868277f203414ca337849258295bb,
+        type: 2}
+      propertyPath: fadeOverlay
+      value: 
+      objectReference: {fileID: 1972074509}
+    - target: {fileID: 212465609125148030, guid: 31c868277f203414ca337849258295bb,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 2ac3c07e8047b4636b23aa01666cfbb7,
+        type: 3}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 31c868277f203414ca337849258295bb, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &822548866
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,6 +1669,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lastSceneIndex: 0
+  goalSceneIndex: 0
 --- !u!4 &1387180431
 Transform:
   m_ObjectHideFlags: 0

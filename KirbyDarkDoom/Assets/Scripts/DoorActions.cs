@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class DoorActions : MonoBehaviour {
 
     [Header("General Variables")]
+    public bool isGoalDoor = false;
     public bool makePlayerFaceRight = true;
     [Range(1f,2f)]
     public float fadeTime = 1f;
@@ -69,20 +70,32 @@ public class DoorActions : MonoBehaviour {
         isFading = true;
         yield return new WaitForSeconds(fadeTime);
 
-        // We then teleport the player and reset all of the enemies to their initial locations
-        playerRB.position = travelSpot.position;
-        playerController.ResetPlayerMovement(makePlayerFaceRight);
-        GameManager.Instance.RespawnAllEnemies();
-        yield return new WaitForFixedUpdate();
+        // If we are a goal door, we move to a new cutscene
+        if(isGoalDoor == true)
+        {
+            GameManager.Instance.GoToGoalScene();
+            yield return null;
+        }
+        // Else, we proceed to the normal transition
+        else
+        {
+            // We then teleport the player and reset all of the enemies to their initial locations
+            playerRB.position = travelSpot.position;
+            playerController.ResetPlayerMovement(makePlayerFaceRight);
+            GameManager.Instance.RespawnAllEnemies();
+            yield return new WaitForFixedUpdate();
 
-        // Then we enable the player to move and start fading back in
-        GameManager.Instance.ResumeGame(false, false);
-        playerHealth.isInvincible = false;
-        isFading = false;
-        yield return new WaitForSeconds(fadeTime);
+            // Then we enable the player to move and start fading back in
+            GameManager.Instance.ResumeGame(false, false);
+            playerHealth.isInvincible = false;
+            isFading = false;
+            yield return new WaitForSeconds(fadeTime);
 
-        // We tell this invoke we are done!
-        isTraveling = false;
-        yield return null;
+            // We tell this invoke we are done!
+            isTraveling = false;
+            yield return null;
+        }
     }
+
+    
 }
