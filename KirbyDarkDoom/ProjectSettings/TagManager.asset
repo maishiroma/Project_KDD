@@ -9,6 +9,8 @@ TagManager:
   - Wall
   - Block
   - Collectible
+  - PassGround
+  - PassBothGround
   layers:
   - Default
   - TransparentFX
