@@ -1,5 +1,6 @@
 ﻿/*  This script handles player movement and all collisions with the player
  */
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
@@ -292,6 +293,14 @@ public class PlayerController : MonoBehaviour {
                         Invoke("StopLandingAnimation", 0.1f);
                     }
                 }
+            }
+        }
+        else if(CheckGrounded() == true)
+        {
+            // If the player is grounded and is ducking on a PassBothGround platform, they will go through it
+            if(collision.gameObject.tag == "PassBothGround" && isDucking == true)
+            {
+                StartCoroutine("ResetPassBothPlatform", collision.gameObject.GetComponent<PlatformEffector2D>());
             }
         }
 	}
@@ -650,6 +659,20 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    // Tells the pass both platform that the player is on to reset itself
+    IEnumerator ResetPassBothPlatform(PlatformEffector2D platform)
+    {
+        // We first tell the platform to detect everything but the player
+        platform.colliderMask = ~(1 << LayerMask.NameToLayer("Player"));
+        isInAir = true;
+        isDucking = false;
+        yield return new WaitForSeconds(0.5f);
+
+        // After that, we tell the mask to detect everything again
+        platform.colliderMask = -1;
+        yield return null;
+    }
+
     // Checks if the player is grounded properly
     private bool CheckGrounded()
     {
@@ -662,7 +685,12 @@ public class PlayerController : MonoBehaviour {
                 RaycastHit2D hit = Physics2D.Raycast(groundCheckers[i].position, -Vector2.up, 0.1f);
                 if(hit == true)
                 {
-                    if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable") || hit.collider.gameObject.layer == LayerMask.NameToLayer("Destructable"))
+                    // If the player is passing through a permeable ground vertically, we do not consider them grounded
+                    if((hit.collider.gameObject.tag == "PassGround" || hit.collider.gameObject.tag == "PassBothGround") && playerRB.velocity.y > 0)
+                    {
+                        return false;
+                    }
+                    else if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Indestructable") || hit.collider.gameObject.layer == LayerMask.NameToLayer("Destructable"))
                     {
                         return true;
                     }

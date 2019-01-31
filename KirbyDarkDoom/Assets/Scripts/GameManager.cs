@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("General Variables")]
     public int lastSceneIndex;      // Used to remember the last level the player was on
+    public int goalSceneIndex;      // The index of the scene that is used to go to the goal scene
 
     // Private Variables
     private bool gamePause = false;  // Is the game currently paused?
@@ -56,6 +57,12 @@ public class GameManager : MonoBehaviour {
         // We take all of the enemies that are in the level and save their references
         // TODO: This might be sloppy, may need to refine depending on player's location
         listOfAllEnemiesInLevel = FindObjectsOfType<NormalEnemyHealth>();
+    }
+
+    // Takes the player to the Result Screen
+    public void GoToGoalScene()
+    {
+        SceneManager.LoadScene("ResultScreen");
     }
 
 	// Takes the player to the GameOver Screen
