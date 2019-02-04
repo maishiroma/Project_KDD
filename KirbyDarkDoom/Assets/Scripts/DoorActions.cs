@@ -86,8 +86,9 @@ public class DoorActions : MonoBehaviour {
         // Else, we proceed to the normal transition
         else
         {
-            // We then teleport the player and reset all of the enemies to their initial locations
+            // We then teleport the player, change their respawn point and reset all of the enemies to their initial locations
             playerRB.position = travelSpot.position;
+            playerHealth.spawnLocation = travelSpot.position;
             playerController.ResetPlayerMovement(makePlayerFaceRight);
             GameManager.Instance.RespawnAllEnemies();
             yield return new WaitForFixedUpdate();
