@@ -64,9 +64,7 @@ public class PlayerController : MonoBehaviour {
     // Private variables
     private Vector2 origVelocity = Vector2.zero;
     private float origGravity = 0f;
-    private float currHorizSpeed = 0f;
     private float horizInput = 0f;
-    private float jumpInput = 0f;
     private float inhaleHitboxXPos = 0f;
     private float slideHitboxXPos = 0f;
     private float origPlayerHeight = 0f;

@@ -49,11 +49,15 @@ public class PlayerHealth : BaseHealth
     // Does what the base Respawn does, except this one resets the variables in this method
     public override void Respawn()
     {
-        if(numbOfLives > 0)
+        if(numbOfLives > 1)
         {
             base.Respawn();
 
-            // we reset the player's variables back to normal
+            // We respawn all of the enemies and blocks
+            GameManager.Instance.RespawnAllEnemies();
+            GameManager.Instance.RestoreAllBlocks();
+
+            // we then the player's variables back to normal
             // This is done so that the player is in front of everything
             playerController.ResetPlayerMovement(playerController.isFacingRight);
             playerRB.transform.position += new Vector3(0,0,-5f);
