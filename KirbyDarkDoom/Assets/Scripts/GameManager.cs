@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
     // Private Variables
     private bool gamePause = false;  // Is the game currently paused?
     private NormalEnemyHealth[] listOfAllEnemiesInLevel;    // Keeps track of all of the enemies in the level
-    private BlockActions[] listOfAllBlocks;                   // Keeps track of all of the blocks in the level
+    private BlockHealth[] listOfAllBlocks;                   // Keeps track of all of the blocks in the level
 
     // Static Variables
     public static GameManager Instance;
@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour {
         // We take all of the enemies and blocks that are in the level and save their references
         // TODO: This might be sloppy, may need to refine depending on player's location
         listOfAllEnemiesInLevel = FindObjectsOfType<NormalEnemyHealth>();
-        listOfAllBlocks = FindObjectsOfType<BlockActions>();
+        listOfAllBlocks = FindObjectsOfType<BlockHealth>();
     }
 
     // Takes the player to the Result Screen
@@ -132,9 +132,9 @@ public class GameManager : MonoBehaviour {
     // Respawns all of the destructable blocks in the level
     public void RestoreAllBlocks()
     {
-        foreach(BlockActions currBlock in listOfAllBlocks)
+        foreach(BlockHealth currBlock in listOfAllBlocks)
         {
-            currBlock.ResetBlock();
+            currBlock.Respawn();
         }
     }
 }
