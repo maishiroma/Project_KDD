@@ -1,5 +1,5 @@
-﻿/*  This script moves anything that is colliding with this in the direction of the player
- * 
+﻿/*  This script moves whatever is considered valid in the direction of the player.
+ *  This is activated by pressing H from the Player Controller.
  */
 
 using System.Collections;
@@ -23,7 +23,7 @@ public class InhaleHitbox : MonoBehaviour {
 	// If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        if(CheckIfInhalable(collision.gameObject.tag) == true)
+        if(CheckIfInhalable(collision.gameObject.tag) == true && isInhalingObject == false)
         {
             isInhalingObject = true;
             if(collision.gameObject.GetComponent<Rigidbody2D>() != null)

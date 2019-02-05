@@ -1,4 +1,6 @@
 ﻿/*  This script handles traveling between areas
+ *  Genrrally, what happens is when the player looks up in front of a door, a transition will play and the player will then
+ *  be warped to another position on the level, as depicted by the travelSpot
  */
 
 using System.Collections;

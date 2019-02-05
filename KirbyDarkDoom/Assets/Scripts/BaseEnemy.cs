@@ -85,8 +85,6 @@ public abstract class BaseEnemy : MonoBehaviour {
         frontOfEnemy.transform.localPosition = new Vector2(-frontOfEnemy.transform.localPosition.x,frontOfEnemy.transform.localPosition.y);
     }
 
-    /* Absract Methods */
-
     // All Enemies who inherit from this class will need to determine how it will move
     public abstract void Move();
 }

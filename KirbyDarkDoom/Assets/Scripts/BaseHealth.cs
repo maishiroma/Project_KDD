@@ -1,5 +1,5 @@
 ﻿/*  This is the base health mechanic that all entities in the game will inherit from.
- * 
+ *  Comes with helpful features that will make respawning, taking damage, and restoring health easy
  */
 
 using System.Collections;
@@ -107,5 +107,6 @@ public abstract class BaseHealth : MonoBehaviour {
     }
 
     // Required by all scripts who inherit from this to implement.
+    // Determines what happens when the enemy loses all of its health
     public abstract void DyingAction();
 }

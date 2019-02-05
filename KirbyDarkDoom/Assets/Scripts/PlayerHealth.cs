@@ -1,6 +1,7 @@
 ﻿/*  By inderiting from BaseHealth, this adds additional features to the player's Health mechanic
  * 
  */
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;

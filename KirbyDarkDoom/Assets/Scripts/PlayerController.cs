@@ -1,5 +1,6 @@
 ﻿/*  This script handles player movement and all collisions with the player
  */
+
 using System.Collections;
 using UnityEngine;
 
@@ -115,6 +116,7 @@ public class PlayerController : MonoBehaviour {
 
         // And nothing is in the player's mouth
         isStuffed = false;
+        isInhaling = false;
 
         // And reset their speed to be 0
         playerRB.velocity = Vector2.zero;
@@ -532,7 +534,7 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }
-        else if(Input.GetKey(KeyCode.H))
+        else if(Input.GetKey(KeyCode.H) && isTakingDamage == false)
         {
             // This occurs immediatly as soon as the player inhaled an enemy
             if(isStuffed == true)
