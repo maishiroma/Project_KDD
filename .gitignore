@@ -24,6 +24,7 @@ tags
 *.DS_Store
 .AppleDouble
 .LSOverride
+*.app/
 
 # Icon must end with two \r
 Icon
