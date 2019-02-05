@@ -29,7 +29,7 @@ public class ExhaleProjectile : MonoBehaviour {
         projectileRB.MovePosition(projectileRB.position + new Vector2(moveSpeed, 0));
     }
 
-    // If the star hits an enemy or wall, it will dissapear
+    // Actions that will happen when the star collides with something
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
         if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable"))
@@ -39,17 +39,11 @@ public class ExhaleProjectile : MonoBehaviour {
         }
         else if(collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
         {
-            if(collision.gameObject.tag == "Enemy")
+            //If the object inherits from BaseHealth, we deal damage to it
+            if(collision.gameObject.GetComponent<BaseHealth>() != null)
             {
-                // Enemy takes damage
-                collision.gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(damagePower);
+                collision.gameObject.GetComponent<BaseHealth>().TakeDamage(damagePower);
             }
-            else if(collision.gameObject.tag == "Block")
-            {
-                // The block is destroyed
-                collision.gameObject.SetActive(false);
-            }
-            // Whatever the projectile runs into here, it will get destroyed
             DestroyProjectile();
         }
 	}

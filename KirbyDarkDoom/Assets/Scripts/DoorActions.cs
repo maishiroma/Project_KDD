@@ -16,7 +16,14 @@ public class DoorActions : MonoBehaviour {
     [Range(0.01f, 1f)]
     public float lerpValue = 0.1f;
 
+    [Header("Camera Modifiers")]
+    public float cameraMinX;
+    public float cameraMaxX;
+    public float cameraMinY;
+    public float cameraMaxY;
+
 	[Header("Outside References")]
+    public CameraController mainCamera;
     public Transform travelSpot;
     public Image fadeOverlay;
 
@@ -79,10 +86,18 @@ public class DoorActions : MonoBehaviour {
         // Else, we proceed to the normal transition
         else
         {
-            // We then teleport the player and reset all of the enemies to their initial locations
+            // We then teleport the player, change their respawn point and reset all of the enemies to their initial locations
             playerRB.position = travelSpot.position;
+            playerHealth.spawnLocation = travelSpot.position;
             playerController.ResetPlayerMovement(makePlayerFaceRight);
             GameManager.Instance.RespawnAllEnemies();
+            yield return new WaitForFixedUpdate();
+
+            // We set the camera to have new bounds so that it will properly show the player
+            mainCamera.minXPos = cameraMinX;
+            mainCamera.maxXPos = cameraMaxX;
+            mainCamera.minYPos = cameraMinY;
+            mainCamera.maxYPos = cameraMaxY;
             yield return new WaitForFixedUpdate();
 
             // Then we enable the player to move and start fading back in

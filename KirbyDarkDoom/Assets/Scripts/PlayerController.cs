@@ -64,9 +64,7 @@ public class PlayerController : MonoBehaviour {
     // Private variables
     private Vector2 origVelocity = Vector2.zero;
     private float origGravity = 0f;
-    private float currHorizSpeed = 0f;
     private float horizInput = 0f;
-    private float jumpInput = 0f;
     private float inhaleHitboxXPos = 0f;
     private float slideHitboxXPos = 0f;
     private float origPlayerHeight = 0f;
@@ -117,6 +115,9 @@ public class PlayerController : MonoBehaviour {
 
         // And nothing is in the player's mouth
         isStuffed = false;
+
+        // And reset their speed to be 0
+        playerRB.velocity = Vector2.zero;
     }
 
     // This stops the player from moving, saving its original velocity

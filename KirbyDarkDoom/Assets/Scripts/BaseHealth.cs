@@ -12,12 +12,12 @@ public abstract class BaseHealth : MonoBehaviour {
     public float maxHealth;
     public bool isInvincible = false;
     public float invincibilityTime = 2f;
+    public Vector2 spawnLocation;               // The respawn location that the entity will use when calling Respawn()
 
     [Header("Base Components")]
     public SpriteRenderer entitySpriteRender;
 
     // Private Variables
-    private Vector2 spawnLocation;
     private float currentHealth;
 
     // Getters

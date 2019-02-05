@@ -26,7 +26,7 @@ public class PatrolEnemy : BaseEnemy
     // This enemy will constantly move
     public override void Move()
     {
-        if(isFacingRight == true)
+        if(IsFacingRight == true)
         {
             enemyRB.AddForce(Vector2.right * moveSpeed);
         }
@@ -57,6 +57,12 @@ public class PatrolEnemy : BaseEnemy
         {
             InvokeRepeating("ToggleFlying", verticalTimer, verticalTimer);
         }
+
+        if(startFacingLeft == true && IsFacingRight == true)
+        {
+            // If we make the enemy start facing left, we only turn them around if they are facing right
+            TurnAround();
+        }
     }
 
     // When the enemy is defeated, all invokes are canceled
@@ -80,6 +86,16 @@ public class PatrolEnemy : BaseEnemy
         flySpeed = Mathf.Abs(flySpeed);
     }
 
+    // Checks whether the enemy collided with something in front of them
+	private void Update()
+	{
+        if(CheckFrontOfEnemy() == true)
+        {
+            // If the enemy collides into a wall, block, or enemy, they will change directions
+            TurnAround();
+        }
+	}
+
 	// Calls the move function that was overriden
 	private void FixedUpdate()
 	{
@@ -94,21 +110,7 @@ public class PatrolEnemy : BaseEnemy
             // Enemy is defeated, but player also takes damage, which is handled in PlayerController
             gameObject.GetComponent<NormalEnemyHealth>().TakeDamage(gameObject.GetComponent<NormalEnemyHealth>().maxHealth);
         }
-        else if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable") || collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
-        {
-            // If the enemy collides into a wall, block, or enemy, they will change directions
-            if(IsInvoking("TurnAround") == false)
-            {
-                Invoke("TurnAround", 0.1f);
-            }
-        }
 	}
-
-    // Used in an Invoke to make the enemy turn around.
-    private void TurnAround()
-    {
-        isFacingRight = !isFacingRight;
-    }
 
     // Used in an Invoke to stop the enemy from ascending/descending
     private void ToggleFlying()
