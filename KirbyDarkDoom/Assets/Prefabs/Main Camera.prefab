@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1685996465411998}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.24, y: 0.13, z: 0}
+  m_LocalPosition: {x: -2.7, y: -32.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -102,6 +102,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraOffset: {x: 0, y: 0}
   minXPos: -2
-  maxXPos: 24
-  minYPos: 0
-  maxYPos: 1
+  maxXPos: 43
+  minYPos: -34
+  maxYPos: -33

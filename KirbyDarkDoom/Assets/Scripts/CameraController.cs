@@ -1,5 +1,5 @@
 ﻿/* Controls how the camera moves with the player. 
- * 
+ * Specifically, this allows the camera to be bound to certain cordinates, depending on what the passed in values are
  */
 
 using System.Collections;

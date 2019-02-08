@@ -1,6 +1,7 @@
 ﻿/*  The standard script for collecting an item
- * 
+ *  Depending on what type of collectible it is, it will do various things for the player
  */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

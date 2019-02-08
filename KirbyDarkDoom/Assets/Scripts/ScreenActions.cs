@@ -8,12 +8,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// Depending on what type of screen you are, you will need to change the enum of this script to reflect the specific actions
 public enum ScreenType {
     TITLE_SCREEN,
     RESULT_SCREEN,
     GAMEOVER_SCREEN
 }
-
 
 public class ScreenActions : MonoBehaviour {
 

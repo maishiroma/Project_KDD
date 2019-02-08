@@ -1,5 +1,6 @@
-﻿/*  This script handles the star projectile movement and how it destroys enemies.
- * 
+﻿/*  This script handles projectile movement and how it interacts with various entities.
+ *  Currently, there's only two types of projectiles: exhale puffs and star projectiles.
+ *  Each one has their own attributes and powers, as depicted by their prefab
  */
 
 using System.Collections;

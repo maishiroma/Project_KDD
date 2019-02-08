@@ -1,5 +1,5 @@
 ﻿/* A basic script that handles global game actions. There will ONLY be one of these when the game spawns.
- * 
+ *  This specifically controls respawning enemies and blocks, level transition speficic actions, and game pauses
  */
 
 using System.Collections;
