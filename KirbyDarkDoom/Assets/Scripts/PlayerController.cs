@@ -100,6 +100,11 @@ public class PlayerController : MonoBehaviour {
             playerCollider.size = new Vector2(1,duckHeight);
             playerCollider.offset = new Vector2(0,duckOffset);
         }
+        if(isInhaling == true)
+        {
+            inhaleHitboxChild.SetActive(false);
+            isInhaling = false;
+        }
 
         // Calls all of the invoke methods to make sure all of the states are reset
         ResetExhaleState();
@@ -116,7 +121,6 @@ public class PlayerController : MonoBehaviour {
 
         // And nothing is in the player's mouth
         isStuffed = false;
-        isInhaling = false;
 
         // And reset their speed to be 0
         playerRB.velocity = Vector2.zero;
@@ -164,7 +168,7 @@ public class PlayerController : MonoBehaviour {
         GraphicUpdate();
 
         // If the player is exhaling or dying, they cannot do any actions
-        if(isExhaling == false && playerHealth.IsDying == false)
+        if(isExhaling == false && playerHealth.IsDying == false && isTakingDamage == false)
         {
             // If the player is inhaling or ducking, they cannot move or jump
             if(isInhaling == false && isDucking == false)
@@ -245,8 +249,20 @@ public class PlayerController : MonoBehaviour {
             }
             else if(isTakingDamage == false && playerHealth.isInvincible == false)
             {
+                // We first stop specific states if they are valid
+                if(isDucking == true)
+                {
+                    playerCollider.size = new Vector2(1,duckHeight);
+                    playerCollider.offset = new Vector2(0,duckOffset);
+                    isDucking = false;
+                }
+                if(isInhaling == true)
+                {
+                    inhaleHitboxChild.SetActive(false);
+                    isInhaling = false;
+                }
+
                 // The player takes damage if they run into an enemy
-                ResetPlayerMovement(isFacingRight);
                 playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
                 playerHealth.ActivateInvincibility();
                 isTakingDamage = true;
@@ -534,7 +550,7 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }
-        else if(Input.GetKey(KeyCode.H) && isTakingDamage == false)
+        else if(Input.GetKey(KeyCode.H))
         {
             // This occurs immediatly as soon as the player inhaled an enemy
             if(isStuffed == true)

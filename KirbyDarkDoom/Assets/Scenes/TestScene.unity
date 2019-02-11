@@ -410,7 +410,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1882758785545764, guid: 8051d656925bf4686b3424fef63bf534, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8051d656925bf4686b3424fef63bf534, type: 2}
@@ -557,7 +557,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1929310450321584, guid: b86ace3e9e6e64acb8362b8e9f6aed09, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114115793518424288, guid: b86ace3e9e6e64acb8362b8e9f6aed09,
         type: 2}
@@ -985,6 +985,12 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &995206129 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114351683028360494, guid: d015d78c3048e44f592f6afd7caf9daf,
+    type: 2}
+  m_PrefabInternal: {fileID: 1205903244}
+  m_Script: {fileID: 11500000, guid: 06ef3d963c21943689052fbce2193bb5, type: 3}
 --- !u!1 &1003893184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1268,6 +1274,11 @@ Prefab:
     - target: {fileID: 114351683028360494, guid: d015d78c3048e44f592f6afd7caf9daf,
         type: 2}
       propertyPath: maxYPos
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114351683028360494, guid: d015d78c3048e44f592f6afd7caf9daf,
+        type: 2}
+      propertyPath: minYPos
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2114,7 +2125,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1998890575695690, guid: 4c6826945c1f9458e9d29c25a1dc2c32, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114873784984551542, guid: 4c6826945c1f9458e9d29c25a1dc2c32,
         type: 2}
@@ -2165,7 +2176,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1882758785545764, guid: 8051d656925bf4686b3424fef63bf534, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1882758785545764, guid: 8051d656925bf4686b3424fef63bf534, type: 2}
       propertyPath: m_Name
@@ -2218,6 +2229,11 @@ Prefab:
       propertyPath: fadeOverlay
       value: 
       objectReference: {fileID: 1473171877}
+    - target: {fileID: 114729666768961980, guid: 31c868277f203414ca337849258295bb,
+        type: 2}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 995206129}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31c868277f203414ca337849258295bb, type: 2}
   m_IsPrefabAsset: 0

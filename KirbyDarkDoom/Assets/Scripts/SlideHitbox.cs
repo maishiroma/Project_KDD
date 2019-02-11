@@ -17,23 +17,26 @@ public class SlideHitbox : MonoBehaviour {
 	// If the player runs into a specific entiry, 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        if(collision.gameObject.GetComponent<BaseHealth>() != null)
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Indestructable") || collision.gameObject.layer == LayerMask.NameToLayer("Destructable"))
         {
-            // If the entiry we run into has healh, we damage said entity
-            collision.gameObject.GetComponent<BaseHealth>().TakeDamage(slideAttackPower);
-
-            if(collision.gameObject.tag == "Enemy")
+            if(collision.gameObject.GetComponent<BaseHealth>() != null)
             {
-                // If the player ran into an enemy, the player will stop its slide
+                // If the entiry we run into has healh, we damage said entity
+                collision.gameObject.GetComponent<BaseHealth>().TakeDamage(slideAttackPower);
+
+                if(collision.gameObject.tag == "Enemy")
+                {
+                    // If the player ran into an enemy, the player will stop its slide
+                    player.isSliding = false;
+                    gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                // We stop the slide if the player is hitting a solid object
                 player.isSliding = false;
                 gameObject.SetActive(false);
             }
-        }
-        else
-        {
-            // Anything else, the player will stop its slide
-            player.isSliding = false;
-            gameObject.SetActive(false);
         }
 	}
 }
