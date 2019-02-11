@@ -11,6 +11,7 @@ TagManager:
   - Collectible
   - PassGround
   - PassBothGround
+  - MiniBoss
   layers:
   - Default
   - TransparentFX

@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 0.05
   timeToLive: 0.2
-  damagePower: 100
+  damagePower: 20
   projectileRB: {fileID: 50277976993063092}
 --- !u!212 &212766673316147182
 SpriteRenderer:

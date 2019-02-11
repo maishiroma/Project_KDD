@@ -97,8 +97,9 @@ public class PlayerController : MonoBehaviour {
         // Depending on some states, we need to reset certain values
         if(isDucking == true)
         {
-            playerCollider.size = new Vector2(1,duckHeight);
-            playerCollider.offset = new Vector2(0,duckOffset);
+            playerCollider.size = new Vector2(1,origPlayerHeight);
+            playerCollider.offset = new Vector2(0,0);
+            isDucking = false;
         }
         if(isInhaling == true)
         {
@@ -252,8 +253,8 @@ public class PlayerController : MonoBehaviour {
                 // We first stop specific states if they are valid
                 if(isDucking == true)
                 {
-                    playerCollider.size = new Vector2(1,duckHeight);
-                    playerCollider.offset = new Vector2(0,duckOffset);
+                    playerCollider.size = new Vector2(1,origPlayerHeight);
+                    playerCollider.offset = new Vector2(0,0);
                     isDucking = false;
                 }
                 if(isInhaling == true)
@@ -273,7 +274,7 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
-	// Checks if the player is grounded
+	// Checks if the player is grounded or if they are constantly touching an enemy
 	private void OnCollisionStay2D(Collision2D collision)
 	{
         if(CheckGrounded() == true  && isInAir == true)
@@ -292,7 +293,7 @@ public class PlayerController : MonoBehaviour {
                 isInAir = false;
 
                 // If the player is flying, they automatically do an airpuff
-                if(isFlying == true)
+                if(isFlying == true && isExhaling == false)
                 {
                     GameObject spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
                     playerGraphics.ChangeSprite("isAirPuffing");
@@ -320,6 +321,33 @@ public class PlayerController : MonoBehaviour {
             if(collision.gameObject.tag == "PassBothGround" && isDucking == true)
             {
                 StartCoroutine("ResetPassBothPlatform", collision.gameObject.GetComponent<PlatformEffector2D>());
+            }
+        }
+
+        if(collision.gameObject.tag == "MiniBoss" || collision.gameObject.tag == "Enemy")
+        {
+            // If the player is constantly touching an enemy, they will keep on getting hurt (once their invincbility frames are done)
+            if(isTakingDamage == false && playerHealth.isInvincible == false)
+            {
+                // We first stop specific states if they are valid
+                if(isDucking == true)
+                {
+                    playerCollider.size = new Vector2(1,origPlayerHeight);
+                    playerCollider.offset = new Vector2(0,0);
+                    isDucking = false;
+                }
+                if(isInhaling == true)
+                {
+                    inhaleHitboxChild.SetActive(false);
+                    isInhaling = false;
+                }
+
+                // The player takes damage if they run into an enemy
+                playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
+                playerHealth.ActivateInvincibility();
+                isTakingDamage = true;
+                playerGraphics.ChangeSprite("isDamaged");
+                Invoke("StopDamageLook", resetDamageLookTimer);
             }
         }
 	}
@@ -519,7 +547,7 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.H))
         {
             // These actions are only allowed once canExhale is true
-            if(canExhale == true)
+            if(canExhale == true && isExhaling == false)
             {
                 GameObject spawned = null;
                 // Exhales out the enemy that the player has in their mouth

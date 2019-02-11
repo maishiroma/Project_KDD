@@ -21,15 +21,21 @@ public class SlideHitbox : MonoBehaviour {
         {
             if(collision.gameObject.GetComponent<BaseHealth>() != null)
             {
-                // If the entiry we run into has healh, we damage said entity
-                collision.gameObject.GetComponent<BaseHealth>().TakeDamage(slideAttackPower);
-
                 if(collision.gameObject.tag == "Enemy")
                 {
-                    // If the player ran into an enemy, the player will stop its slide
+                    // If the player ran into an enemy, the player will stop its slide AND will danage the enemy
                     player.isSliding = false;
                     gameObject.SetActive(false);
                 }
+                else if(collision.gameObject.tag == "MiniBoss")
+                {
+                    // If the player ran into a miniboss, the player will stop its slide, BUT WONT damage the boss
+                    player.isSliding = false;
+                    gameObject.SetActive(false);
+                    return;
+                }
+
+                collision.gameObject.GetComponent<BaseHealth>().TakeDamage(slideAttackPower);
             }
             else
             {
