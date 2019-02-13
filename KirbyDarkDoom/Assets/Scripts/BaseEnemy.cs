@@ -6,6 +6,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum EnemyStates{
+    IDLE,
+    ATTACK1,
+    ATTACK2,
+    COOLDOWN
+}
+
 public abstract class BaseEnemy : MonoBehaviour {
 
 	[Header("Base Variables")]

@@ -175,7 +175,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1911324619482096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.53, y: 0.95, z: -5}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4026503298272692}
@@ -401,6 +401,7 @@ MonoBehaviour:
   maxHealth: 100
   isInvincible: 0
   invincibilityTime: 2
+  spawnLocation: {x: 0, y: 0}
   entitySpriteRender: {fileID: 212156262353481102}
   numbOfLives: 3
   playerController: {fileID: 114461392090596268}

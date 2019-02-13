@@ -11,15 +11,15 @@ Prefab:
   m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1851551426365548}
   m_IsPrefabAsset: 1
---- !u!1 &1631629781049824
+--- !u!1 &1061733201182094
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4280621392769396}
-  - component: {fileID: 212263857315938376}
+  - component: {fileID: 4729213315812772}
+  - component: {fileID: 212870212801331220}
   m_Layer: 9
   m_Name: FrontOfEnemy
   m_TagString: Untagged
@@ -48,19 +48,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4280621392769396
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1631629781049824}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.75, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4358065122455902}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4358065122455902
 Transform:
   m_ObjectHideFlags: 1
@@ -68,11 +55,24 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1851551426365548}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.96, y: -1.67, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4280621392769396}
+  - {fileID: 4729213315812772}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4729213315812772
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1061733201182094}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.5, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4358065122455902}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &50357400346206562
@@ -107,18 +107,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.31, y: -0.09}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3, y: 3}
+    oldSize: {x: 2.4, y: 2.78}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.35, y: 2.7}
+  m_Size: {x: 2.4, y: 2.78}
   m_EdgeRadius: 0
 --- !u!114 &114191752791798554
 MonoBehaviour:
@@ -146,13 +146,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb834dd6628be42d39ee782c3cb3eed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 300
   attackPower: 20
   startFacingLeft: 0
   enemyRB: {fileID: 50357400346206562}
-  frontOfEnemy: {fileID: 4280621392769396}
-  isAttacking: 0
+  frontOfEnemy: {fileID: 4729213315812772}
+  currentState: 0
+  dashSpeed: 700
+  bombThrowSpeed: 5
+  jumpPower: 800
+  behaviorChangeTime: 6
+  paceTime: 2
+  dashTime: 2
+  jumpHeightTime: 1.3
+  cooldownTime: 0.5
   bombPrefab: {fileID: 1623402657959844, guid: 0d728fa8099ba48a2a9ef7bdd87c6783, type: 2}
+  bombSpawnPoint: {fileID: 4729213315812772}
   bossHealth: {fileID: 114389335611510454}
   bossGraphics: {fileID: 114191752791798554}
 --- !u!114 &114389335611510454
@@ -219,12 +228,12 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!212 &212263857315938376
+--- !u!212 &212870212801331220
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1631629781049824}
+  m_GameObject: {fileID: 1061733201182094}
   m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0

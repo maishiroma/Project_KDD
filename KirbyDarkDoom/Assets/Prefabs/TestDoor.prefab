@@ -52,7 +52,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1535753566171300}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.11, y: 0.62, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4676548161567870}
@@ -108,9 +108,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5f11162f5e7844a684be6ec4402a8c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isGoalDoor: 0
   makePlayerFaceRight: 1
   fadeTime: 1
   lerpValue: 0.07
+  cameraMinX: 0
+  cameraMaxX: 0
+  cameraMinY: 0
+  cameraMaxY: 0
+  mainCamera: {fileID: 0}
   travelSpot: {fileID: 4676548161567870}
   fadeOverlay: {fileID: 0}
 --- !u!212 &212465609125148030
