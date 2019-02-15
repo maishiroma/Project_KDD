@@ -97,8 +97,9 @@ public class PlayerController : MonoBehaviour {
         // Depending on some states, we need to reset certain values
         if(isDucking == true)
         {
-            playerCollider.size = new Vector2(1,duckHeight);
-            playerCollider.offset = new Vector2(0,duckOffset);
+            playerCollider.size = new Vector2(1,origPlayerHeight);
+            playerCollider.offset = new Vector2(0,0);
+            isDucking = false;
         }
         if(isInhaling == true)
         {
@@ -247,33 +248,15 @@ public class PlayerController : MonoBehaviour {
                 isMovingUpwards = true;
                 Invoke("StopVerticalIncrease", highFallBounceTimer);
             }
-            else if(isTakingDamage == false && playerHealth.isInvincible == false)
+            else
             {
-                // We first stop specific states if they are valid
-                if(isDucking == true)
-                {
-                    playerCollider.size = new Vector2(1,duckHeight);
-                    playerCollider.offset = new Vector2(0,duckOffset);
-                    isDucking = false;
-                }
-                if(isInhaling == true)
-                {
-                    inhaleHitboxChild.SetActive(false);
-                    isInhaling = false;
-                }
-
-                // The player takes damage if they run into an enemy
-                playerHealth.TakeDamage(collision.gameObject.GetComponent<BaseEnemy>().attackPower);
-                playerHealth.ActivateInvincibility();
-                isTakingDamage = true;
-                playerGraphics.ChangeSprite("isDamaged");
-                Invoke("StopDamageLook", resetDamageLookTimer);
+                // The player takes damage accordingly
+                PlayerHurt(collision.gameObject.GetComponent<BaseEnemy>());
             }
         }
-
 	}
 
-	// Checks if the player is grounded
+	// Checks if the player is grounded or if they are constantly touching an enemy
 	private void OnCollisionStay2D(Collision2D collision)
 	{
         if(CheckGrounded() == true  && isInAir == true)
@@ -292,7 +275,7 @@ public class PlayerController : MonoBehaviour {
                 isInAir = false;
 
                 // If the player is flying, they automatically do an airpuff
-                if(isFlying == true)
+                if(isFlying == true && isExhaling == false)
                 {
                     GameObject spawned = Instantiate(airPuffPrefab, inhaleHitboxChild.transform.position, Quaternion.identity, gameObject.transform);
                     playerGraphics.ChangeSprite("isAirPuffing");
@@ -321,6 +304,12 @@ public class PlayerController : MonoBehaviour {
             {
                 StartCoroutine("ResetPassBothPlatform", collision.gameObject.GetComponent<PlatformEffector2D>());
             }
+        }
+
+        if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "MiniBoss")
+        {
+            // The player takes damage accordingly
+            PlayerHurt(collision.gameObject.GetComponent<BaseEnemy>());
         }
 	}
 
@@ -519,7 +508,7 @@ public class PlayerController : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.H))
         {
             // These actions are only allowed once canExhale is true
-            if(canExhale == true)
+            if(canExhale == true && isExhaling == false)
             {
                 GameObject spawned = null;
                 // Exhales out the enemy that the player has in their mouth
@@ -718,5 +707,59 @@ public class PlayerController : MonoBehaviour {
             return false;
         }
         return false;
+    }
+
+    // Helper method that handles all of the necessary logic when the player gets hurt
+    private void PlayerHurt(BaseEnemy enemy)
+    {
+        if(isTakingDamage == false && playerHealth.isInvincible == false)
+        {
+            // We first stop specific states if they are valid
+            if(isDucking == true)
+            {
+                playerCollider.size = new Vector2(1,origPlayerHeight);
+                playerCollider.offset = new Vector2(0,0);
+                isDucking = false;
+            }
+            if(isInhaling == true)
+            {
+                inhaleHitboxChild.SetActive(false);
+                isInhaling = false;
+            }
+
+            // The player then takes damage and are briefly invincible
+            playerHealth.TakeDamage(enemy.attackPower);
+            playerHealth.ActivateInvincibility();
+            isTakingDamage = true;
+            playerGraphics.ChangeSprite("isDamaged");
+            Invoke("StopDamageLook", resetDamageLookTimer);
+        }
+    }
+
+    // Exactly like the helper method, only this takes a different param
+    public void PlayerHurt(float attackPower)
+    {
+        if(isTakingDamage == false && playerHealth.isInvincible == false)
+        {
+            // We first stop specific states if they are valid
+            if(isDucking == true)
+            {
+                playerCollider.size = new Vector2(1,origPlayerHeight);
+                playerCollider.offset = new Vector2(0,0);
+                isDucking = false;
+            }
+            if(isInhaling == true)
+            {
+                inhaleHitboxChild.SetActive(false);
+                isInhaling = false;
+            }
+
+            // The player then takes damage and are briefly invincible
+            playerHealth.TakeDamage(attackPower);
+            playerHealth.ActivateInvincibility();
+            isTakingDamage = true;
+            playerGraphics.ChangeSprite("isDamaged");
+            Invoke("StopDamageLook", resetDamageLookTimer);
+        }
     }
 }

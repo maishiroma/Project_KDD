@@ -6,6 +6,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// These are the various states all enemies can exhibit.
+public enum EnemyStates{
+    IDLE,
+    ATTACK1,
+    ATTACK2,
+    COOLDOWN
+}
+
 public abstract class BaseEnemy : MonoBehaviour {
 
 	[Header("Base Variables")]
@@ -14,6 +22,7 @@ public abstract class BaseEnemy : MonoBehaviour {
     public bool startFacingLeft = false;        // A variable that is only used at the start of an enemy's life to make it move left initially
 
     [Header("Base Component References")]
+    public SpriteRenderer enemySprite;
     public Rigidbody2D enemyRB;
     public Transform frontOfEnemy;
 
@@ -81,6 +90,7 @@ public abstract class BaseEnemy : MonoBehaviour {
     // Turns the enemy around, reorientating its front detecter
     public void TurnAround()
     {
+        enemySprite.flipX = !enemySprite.flipX;
         isFacingRight = !isFacingRight;
         frontOfEnemy.transform.localPosition = new Vector2(-frontOfEnemy.transform.localPosition.x,frontOfEnemy.transform.localPosition.y);
     }
