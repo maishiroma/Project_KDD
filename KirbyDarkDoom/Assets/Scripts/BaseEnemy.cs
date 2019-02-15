@@ -11,7 +11,8 @@ public enum EnemyStates{
     IDLE,
     ATTACK1,
     ATTACK2,
-    COOLDOWN
+    COOLDOWN,
+    DEFEAT
 }
 
 public abstract class BaseEnemy : MonoBehaviour {

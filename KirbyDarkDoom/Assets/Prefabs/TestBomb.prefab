@@ -157,6 +157,7 @@ MonoBehaviour:
   maxHealth: 1
   isInvincible: 0
   invincibilityTime: 2
+  canBeInhaled: 1
   spawnLocation: {x: 0, y: 0}
   entitySpriteRender: {fileID: 212019272010774246}
 --- !u!114 &114648772212619250
@@ -177,6 +178,7 @@ MonoBehaviour:
   hitboxXSize: 1.5
   hitboxYSize: 1
   hitboxTimer: 1
+  objectHealth: {fileID: 114611346937476530}
   hitboxRef: {fileID: 61869570419011186}
   objectRB: {fileID: 50671475493125694}
   objectSprite: {fileID: 212019272010774246}

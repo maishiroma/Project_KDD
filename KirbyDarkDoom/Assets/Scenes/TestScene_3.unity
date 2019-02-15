@@ -681,20 +681,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1851551426365548, guid: 93cd873cd7821408f9ae6e924fa75569,
     type: 2}
   m_PrefabInternal: {fileID: 1374822688}
---- !u!114 &381940498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 381940497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c57d20a7f9ffd4a60be8e38647d3211f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listOfRelatedObjects:
-  - {fileID: 165098309}
-  - {fileID: 1522685175}
 --- !u!1 &382027189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1786,9 +1772,29 @@ Prefab:
       propertyPath: bossHealthBar_UI
       value: 
       objectReference: {fileID: 1205889675}
+    - target: {fileID: 114075140755556464, guid: 93cd873cd7821408f9ae6e924fa75569,
+        type: 2}
+      propertyPath: listOfRelatedObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 165098309}
+    - target: {fileID: 114075140755556464, guid: 93cd873cd7821408f9ae6e924fa75569,
+        type: 2}
+      propertyPath: listOfRelatedObjects.Array.data[1]
+      value: 
+      objectReference: {fileID: 1522685175}
     - target: {fileID: 1851551426365548, guid: 93cd873cd7821408f9ae6e924fa75569, type: 2}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114666031931447546, guid: 93cd873cd7821408f9ae6e924fa75569,
+        type: 2}
+      propertyPath: timeToDestroy
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114389335611510454, guid: 93cd873cd7821408f9ae6e924fa75569,
+        type: 2}
+      propertyPath: maxHealth
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 93cd873cd7821408f9ae6e924fa75569, type: 2}

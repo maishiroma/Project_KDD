@@ -23,7 +23,7 @@ public class InhaleHitbox : MonoBehaviour {
 	// If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        if(CheckIfInhalable(collision.gameObject.tag) == true && isInhalingObject == false)
+        if(CheckIfInhalable(collision.gameObject) == true && isInhalingObject == false)
         {
             isInhalingObject = true;
             if(collision.gameObject.GetComponent<Rigidbody2D>() != null)
@@ -36,7 +36,7 @@ public class InhaleHitbox : MonoBehaviour {
     // Pulls the object toward the player
 	private void OnTriggerStay2D(Collider2D collision)
 	{
-        if(CheckIfInhalable(collision.gameObject.tag) == true && isInhalingObject == true)
+        if(CheckIfInhalable(collision.gameObject) == true && isInhalingObject == true)
         {
             Vector2 newPos;
 
@@ -52,7 +52,14 @@ public class InhaleHitbox : MonoBehaviour {
             }
 
             // If the object is close to the player while they are being inhaled, they will make the player stuffed
-            if(Vector2.Distance(playerRB.position, newPos) <= 1f)
+            int sign = 1;
+            int layerMasks = (1 << (LayerMask.NameToLayer("Indestructable"))) | (1 << LayerMask.NameToLayer("Destructable"));
+            if(playerController.isFacingRight == false)
+            {
+                sign *= -1;
+            }
+
+            if(Physics2D.Raycast(playerRB.position, Vector2.right * sign, 1f, layerMasks))
             {
                 if(collision.gameObject.tag == "Collectible")
                 {
@@ -85,15 +92,25 @@ public class InhaleHitbox : MonoBehaviour {
         }
 	}
 
-    // Checks if the given tag name is something the player can inhale
-    private bool CheckIfInhalable(string collisionName)
+    // Checks if the given object is something the player can inhale
+    private bool CheckIfInhalable(GameObject inhaledObject)
     {
-        switch(collisionName)
+        if(inhaledObject.GetComponent<BaseHealth>() != null)
         {
-            case "Enemy":
-            case "Block":
-            case "Collectible":
+            // We first check if the object has a health component and if so, we check its property CanBeInhalled
+            if(inhaledObject.GetComponent<BaseHealth>().canBeInhaled == true)
+            {
                 return true;
+            }
+        }
+        else
+        {
+            // Otherwise we look at its tag
+            switch(inhaledObject.tag)
+            {
+                case "Collectible":
+                    return true;
+            }
         }
         return false;
     }
