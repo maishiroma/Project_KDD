@@ -10,12 +10,19 @@ using UnityEngine;
 public class SelfDestroy : MonoBehaviour {
 
 	[Header("General Variables")]
-    public bool canCreateHitbox = false;
+    public bool canExplode = false;
     public float timeToDestroy;
+
+    [Header("Explosion Variables")]
+    public Sprite explosionSprite;
+    public float explosionPower;
+    public float hitboxXSize;
+    public float hitboxYSize;
     public float hitboxTimer;
 
     [Header("Outside References")]
-    public GameObject hitboxRef;
+    public BoxCollider2D hitboxRef;
+    public Rigidbody2D objectRB;
     public SpriteRenderer objectSprite;
 
     // Reconfirmes the variables being valid timers
@@ -31,17 +38,28 @@ public class SelfDestroy : MonoBehaviour {
         StartCoroutine(DestroyLogic());
 	}
 
-    // Here, depending on what canCreateHitbox does, we either immedatly remove the gameobject, or create the hitbox
-    IEnumerator DestroyLogic()
+    // Harms whatever is in the blast zone, if applicable
+	private void OnTriggerStay2D(Collider2D collision)
+	{
+        if(collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerController>().PlayerHurt(explosionPower);
+        }
+	}
+
+	// Here, depending on what canCreateHitbox does, we either immedatly remove the gameobject, or create the hitbox
+	IEnumerator DestroyLogic()
     {
         // We wait for the time to destroy the GameObject
         yield return new WaitForSeconds(timeToDestroy);
 
-        if(canCreateHitbox == true)
+        if(canExplode == true)
         {
             // If we can create a hitbox, we set it active here
-            objectSprite.enabled = false;
-            hitboxRef.SetActive(true);
+            objectSprite.sprite = explosionSprite;
+            hitboxRef.isTrigger = true;
+            hitboxRef.size = new Vector2(hitboxXSize, hitboxYSize);
+            objectRB.isKinematic = true;
             yield return new WaitForSeconds(hitboxTimer);
         }
 
@@ -56,4 +74,10 @@ public class SelfDestroy : MonoBehaviour {
         Destroy(gameObject);
     }
 
+    // When selectign this object, draws out the blast zone radius
+	private void OnDrawGizmos()
+	{
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(gameObject.transform.position, new Vector3(hitboxXSize, hitboxYSize));
+	}
 }

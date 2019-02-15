@@ -148,16 +148,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 300
   attackPower: 20
-  startFacingLeft: 0
+  startFacingLeft: 1
+  enemySprite: {fileID: 212105829403050546}
   enemyRB: {fileID: 50357400346206562}
   frontOfEnemy: {fileID: 4729213315812772}
   currentState: 0
   dashSpeed: 700
-  bombThrowSpeed: 5
+  bombThrowSpeed: 10
   jumpPower: 800
   behaviorChangeTime: 6
   paceTime: 2
-  dashTime: 2
+  dashTime: 1.5
   jumpHeightTime: 1.3
   cooldownTime: 0.5
   bombPrefab: {fileID: 1623402657959844, guid: 0d728fa8099ba48a2a9ef7bdd87c6783, type: 2}
@@ -175,7 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 802bc49701c304f2ab11966c40fd2b9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 60
   isInvincible: 0
   invincibilityTime: 2
   spawnLocation: {x: 0, y: 0}

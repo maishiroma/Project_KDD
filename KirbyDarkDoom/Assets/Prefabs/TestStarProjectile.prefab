@@ -101,6 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 0.5
   timeToLive: 20
+  canDamageBosses: 1
   damagePower: 20
   projectileRB: {fileID: 50267242037985808}
 --- !u!212 &212859186390848866

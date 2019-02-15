@@ -20,6 +20,7 @@ public class MiniBossHealth : BaseHealth
 	{
         bossName_UI.gameObject.SetActive(true);
         bossHealthBar_UI.gameObject.SetActive(true);
+        bossHealthBar_UI.maxValue = maxHealth;
 	}
 
 	//Updates the boss's health bar to the screen

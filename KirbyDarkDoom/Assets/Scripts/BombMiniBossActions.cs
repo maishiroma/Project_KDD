@@ -30,6 +30,7 @@ public class BombMiniBossActions : BaseEnemy {
 
     // Private variables
     private bool hasActivatedCooldown;
+    private bool isMovingForward;
     private float origSpeed;
     private GameObject spawnedBombInstance;
 
@@ -40,7 +41,7 @@ public class BombMiniBossActions : BaseEnemy {
         {
             case EnemyStates.IDLE:
                 // Miniboss simply paces around
-                if(IsFacingRight == true)
+                if(isMovingForward == true)
                 {
                     enemyRB.AddForce(Vector2.right * moveSpeed);
                 }
@@ -49,9 +50,9 @@ public class BombMiniBossActions : BaseEnemy {
                     enemyRB.AddForce(-Vector2.right * moveSpeed);
                 }
 
-                if(!IsInvoking("TurnAround"))
+                if(!IsInvoking("ChangePaceDirec"))
                 {
-                    Invoke("TurnAround", paceTime);
+                    Invoke("ChangePaceDirec", paceTime);
                 }
                 break;
             case EnemyStates.ATTACK1:
@@ -86,6 +87,24 @@ public class BombMiniBossActions : BaseEnemy {
                 }
                 break;
         }
+    }
+
+    // When starting up, we reset all of the enemy statuses
+    private void OnEnable()
+    {
+        enemyRB.velocity = Vector2.zero;
+
+        if(startFacingLeft == true && IsFacingRight == true)
+        {
+            // If we make the enemy start facing left, we only turn them around if they are facing right
+            TurnAround();
+        }
+    }
+
+    // When the enemy is defeated, all invokes are canceled
+    private void OnDisable()
+    {
+        CancelInvoke();
     }
 
     // Makes sure all of the timers are positive values
@@ -156,21 +175,27 @@ public class BombMiniBossActions : BaseEnemy {
         if(currentState == EnemyStates.IDLE)
         {
             /*  
-             * If the RANS is either a 2 or a 3, the boss will do something, IF they are in the IDLE state
+             * If the RANS is either a 1 or a 2, the boss will do something, IF they are in the IDLE state
              * 
              */
-            int rand = (int)Random.Range(1,4);
-            if(rand == 2)
+            int rand = (int)Random.Range(1,3);
+            if(rand == 1)
             {
                 // DASH ATTACK
                 currentState = EnemyStates.ATTACK1;
             }
-            else if(rand == 3)
+            else if(rand == 2)
             {
                 // BOMB THROW
                 currentState = EnemyStates.ATTACK2;
             }
         }
+    }
+
+    // Called in an Invoke to move the opposite way
+    private void ChangePaceDirec()
+    {
+        isMovingForward = !isMovingForward;
     }
 
     // Makes the miniboss resume back to its idle state after attacking
@@ -185,6 +210,7 @@ public class BombMiniBossActions : BaseEnemy {
         yield return new WaitForSeconds(cooldownTime);
 
         // We then reset the state back
+        TurnAround();
         currentState = EnemyStates.IDLE;
         hasActivatedCooldown = false;
         yield return null;

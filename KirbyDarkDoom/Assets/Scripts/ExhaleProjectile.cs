@@ -12,6 +12,7 @@ public class ExhaleProjectile : MonoBehaviour {
 	[Header("General Variables")]
     public float moveSpeed;
     public float timeToLive;
+    public bool canDamageBosses;
     public float damagePower;
 
     [Header("External References")]
@@ -43,9 +44,16 @@ public class ExhaleProjectile : MonoBehaviour {
             //If the object inherits from BaseHealth, we deal damage to it
             if(collision.gameObject.GetComponent<BaseHealth>() != null)
             {
+                if(collision.gameObject.tag == "MiniBoss" && canDamageBosses == false)
+                {
+                    // If the projectile hits a boss and it CANT damage it, we exit this logic
+                    DestroyProjectile();
+                    return;
+                }
+                // Else, we damage the object
                 collision.gameObject.GetComponent<BaseHealth>().TakeDamage(damagePower);
+                DestroyProjectile();
             }
-            DestroyProjectile();
         }
 	}
 
