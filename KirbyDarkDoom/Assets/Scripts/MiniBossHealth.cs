@@ -11,7 +11,12 @@ using TMPro;
 
 public class MiniBossHealth : BaseHealth
 {
-    [Header("Sub Variables")]
+    [Header("Sub Outside References")]
+    public BombMiniBossActions enemyActions;
+    public EnemyGraphics enemyGraphics;
+    public SelfDestroy explodeComponent;
+
+    [Header("Sub UI Refs")]
     public TextMeshProUGUI bossName_UI;
     public Slider bossHealthBar_UI;
 
@@ -29,20 +34,16 @@ public class MiniBossHealth : BaseHealth
         bossHealthBar_UI.value = CurrentHealth;
 	}
 
-    // Called in an Invoke. Once this is called, the miniboss is officially defeated
-    private void Dissapear()
-    {
-        gameObject.SetActive(false);
-    }
-
-    // Once the boss is dead, it will stop moving. After X seconds it will then dissapear.
+    // Once the boss is dead, it will stop moving. After X seconds it will then explode.
 	public override void DyingAction()
     {
         if(!IsInvoking("Dissapear"))
         {
             bossName_UI.gameObject.SetActive(false);
             bossHealthBar_UI.gameObject.SetActive(false);
-            Invoke("Dissapear", 3f);
+            enemyActions.CurrentState = EnemyStates.DEFEAT;
+            canBeInhaled = true;
+            explodeComponent.enabled = true;
         }
     }
 }

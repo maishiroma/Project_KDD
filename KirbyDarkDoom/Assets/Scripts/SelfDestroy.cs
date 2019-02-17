@@ -21,6 +21,7 @@ public class SelfDestroy : MonoBehaviour {
     public float hitboxTimer;
 
     [Header("Outside References")]
+    public BaseHealth objectHealth;
     public BoxCollider2D hitboxRef;
     public Rigidbody2D objectRB;
     public SpriteRenderer objectSprite;
@@ -38,7 +39,13 @@ public class SelfDestroy : MonoBehaviour {
         StartCoroutine(DestroyLogic());
 	}
 
-    // Harms whatever is in the blast zone, if applicable
+    // When deactivated, we remove this object
+	private void OnDisable()
+	{
+        Destroy(gameObject);
+	}
+
+	// Harms whatever is in the blast zone, if applicable
 	private void OnTriggerStay2D(Collider2D collision)
 	{
         if(collision.gameObject.tag == "Player")
@@ -60,18 +67,12 @@ public class SelfDestroy : MonoBehaviour {
             hitboxRef.isTrigger = true;
             hitboxRef.size = new Vector2(hitboxXSize, hitboxYSize);
             objectRB.isKinematic = true;
+            objectHealth.canBeInhaled = false;
             yield return new WaitForSeconds(hitboxTimer);
         }
 
         gameObject.SetActive(false);
-        Invoke("RemoveMe", 1f);
         yield return null;
-    }
-
-    // Removes the GameObject from the scene from an Invoke call.
-    private void RemoveMe()
-    {
-        Destroy(gameObject);
     }
 
     // When selectign this object, draws out the blast zone radius

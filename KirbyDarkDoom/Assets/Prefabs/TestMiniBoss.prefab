@@ -41,6 +41,8 @@ GameObject:
   - component: {fileID: 114336949428024796}
   - component: {fileID: 114191752791798554}
   - component: {fileID: 114389335611510454}
+  - component: {fileID: 114075140755556464}
+  - component: {fileID: 114666031931447546}
   m_Layer: 9
   m_Name: TestMiniBoss
   m_TagString: MiniBoss
@@ -120,6 +122,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.4, y: 2.78}
   m_EdgeRadius: 0
+--- !u!114 &114075140755556464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1851551426365548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c57d20a7f9ffd4a60be8e38647d3211f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listOfRelatedObjects:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &114191752791798554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -152,7 +168,6 @@ MonoBehaviour:
   enemySprite: {fileID: 212105829403050546}
   enemyRB: {fileID: 50357400346206562}
   frontOfEnemy: {fileID: 4729213315812772}
-  currentState: 0
   dashSpeed: 700
   bombThrowSpeed: 10
   jumpPower: 800
@@ -179,10 +194,36 @@ MonoBehaviour:
   maxHealth: 60
   isInvincible: 0
   invincibilityTime: 2
+  canBeInhaled: 0
   spawnLocation: {x: 0, y: 0}
   entitySpriteRender: {fileID: 212105829403050546}
+  enemyActions: {fileID: 114336949428024796}
+  enemyGraphics: {fileID: 114191752791798554}
+  explodeComponent: {fileID: 114666031931447546}
   bossName_UI: {fileID: 0}
   bossHealthBar_UI: {fileID: 0}
+--- !u!114 &114666031931447546
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1851551426365548}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f53f644605e6e4df4aa5d2564e98e63c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canExplode: 1
+  timeToDestroy: 3
+  explosionSprite: {fileID: 21300000, guid: 9b170821e8499411caa3f5b9c802c41b, type: 3}
+  explosionPower: 20
+  hitboxXSize: 2.4
+  hitboxYSize: 2.78
+  hitboxTimer: 2
+  objectHealth: {fileID: 114389335611510454}
+  hitboxRef: {fileID: 61648410391567178}
+  objectRB: {fileID: 50357400346206562}
+  objectSprite: {fileID: 212105829403050546}
 --- !u!212 &212105829403050546
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -10,7 +10,6 @@ using UnityEngine;
 public class BombMiniBossActions : BaseEnemy {
 
     [Header("Sub General Vars")]
-    public EnemyStates currentState;
     public float dashSpeed;
     public float bombThrowSpeed;
     public float jumpPower;
@@ -29,15 +28,37 @@ public class BombMiniBossActions : BaseEnemy {
     public EnemyGraphics bossGraphics;
 
     // Private variables
+    private EnemyStates currentState;       // The current state of the miniboss, which determines its specific actions
     private bool hasActivatedCooldown;
     private bool isMovingForward;
     private float origSpeed;
     private GameObject spawnedBombInstance;
 
+    public EnemyStates CurrentState {
+        get {return currentState;}
+        set {
+            // When you switch states, its graphics will change accordingly
+            switch(value)
+            {
+                case EnemyStates.IDLE:
+                    bossGraphics.SwitchSprite("normal");
+                    break;
+                case EnemyStates.ATTACK1:
+                case EnemyStates.ATTACK2:
+                    bossGraphics.SwitchSprite("attack");
+                    break;
+                case EnemyStates.DEFEAT:
+                    bossGraphics.SwitchSprite("defeat");
+                    break;
+            }
+            currentState = value;
+        }
+    }
+
     // Determines how the boss will move around
     public override void Move()
     {
-        switch(currentState)
+        switch(CurrentState)
         {
             case EnemyStates.IDLE:
                 // Miniboss simply paces around
@@ -133,12 +154,6 @@ public class BombMiniBossActions : BaseEnemy {
         InvokeRepeating("RandomBehavior", behaviorChangeTime, behaviorChangeTime);
 	}
 
-	// All non physics stuff occurs here (like graphic changes)
-	private void Update()
-    {
-        GraphicUpdate();
-    }
-
     // All physics stuff happens here (like moving)
 	private void FixedUpdate()
 	{
@@ -149,30 +164,10 @@ public class BombMiniBossActions : BaseEnemy {
         }
 	}
 
-	// Changes the boss's graphics depending on its state
-	private void GraphicUpdate()
-    {
-        if(bossHealth.CurrentHealth <= 0)
-        {
-            // Boss is defeated
-            bossGraphics.SwitchSprite("defeat");
-        }
-        else if(currentState == EnemyStates.ATTACK1 || currentState == EnemyStates.ATTACK2)
-        {
-            // Boss is currently attacking
-            bossGraphics.SwitchSprite("attack");
-        }
-        else
-        {
-            // Default pose
-            bossGraphics.SwitchSprite("normal");
-        }
-    }
-
     // Sets up the bahavior of the EnemyAI
     private void RandomBehavior()
     {
-        if(currentState == EnemyStates.IDLE)
+        if(CurrentState == EnemyStates.IDLE)
         {
             /*  
              * If the RANS is either a 1 or a 2, the boss will do something, IF they are in the IDLE state
@@ -182,12 +177,12 @@ public class BombMiniBossActions : BaseEnemy {
             if(rand == 1)
             {
                 // DASH ATTACK
-                currentState = EnemyStates.ATTACK1;
+                CurrentState = EnemyStates.ATTACK1;
             }
             else if(rand == 2)
             {
                 // BOMB THROW
-                currentState = EnemyStates.ATTACK2;
+                CurrentState = EnemyStates.ATTACK2;
             }
         }
     }
@@ -206,12 +201,12 @@ public class BombMiniBossActions : BaseEnemy {
         yield return new WaitForSeconds(dashTime);
 
         // We enter cooldown period
-        currentState = EnemyStates.COOLDOWN;
+        CurrentState = EnemyStates.COOLDOWN;
         yield return new WaitForSeconds(cooldownTime);
 
         // We then reset the state back
         TurnAround();
-        currentState = EnemyStates.IDLE;
+        CurrentState = EnemyStates.IDLE;
         hasActivatedCooldown = false;
         yield return null;
     }
@@ -230,11 +225,11 @@ public class BombMiniBossActions : BaseEnemy {
         yield return new WaitForFixedUpdate();
 
         // We enter cooldown
-        currentState = EnemyStates.COOLDOWN;
+        CurrentState = EnemyStates.COOLDOWN;
         yield return new WaitForSeconds(cooldownTime);
 
         // And then we reset the state
-        currentState = EnemyStates.IDLE;
+        CurrentState = EnemyStates.IDLE;
         hasActivatedCooldown = false;
         spawnedBombInstance = null;
         yield return null;
