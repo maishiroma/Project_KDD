@@ -24,6 +24,7 @@ This is the main mechanism that controls how the enemy moves around in the world
 - `Move Speed`: Determines how fast the enemy moves around.
 - `Attack Power`: How much damage does this enemy do when colliding with the player
 - `Start Facing Left`: By default, the enemy will move to the right. When toggled, this forces the enemy to move left instad. This MUST be toggled at the start of the enemy's creation. It will _**not work**_ when the game has already been started.
+- `Can Be Inhaled`: Can this enemy be inhaled by the player?
 - `Move Set Distance`: By default, the enemy will continuously move in one direction until it hits a wall or another enemy, then it will change direction. When toggled, the enemy will move in one direction for `turnTime` seconds before automatically turning around.
 - `Turn Time`: This works in cotangent with `Move Set Distance` in that this is the number of seconds it takes for the enemy to turn around. If `Move Set Distance` is off, this does nothing.
 - `Can Fly`: By default, enemies cannot move upwards. When toggled on, this allows for the enemy to move upwards as well as side to side.
@@ -33,6 +34,7 @@ This is the main mechanism that controls how the enemy moves around in the world
 
 #### Normal Enemy Health component
 This indicates how much health the enemy has. This also handles the mechanisms for removing and respawning enemies. In this prototype, only two of the `Base Variables` are used (since this inherits from `BaseHealth`)
+- `Can Be Inhaled`: Determines if this enemy can be inhaled by the player. Defaulted to be true.
 - `Max Health`: The starting health the enemy has. This also limits the max amount of health an enemy has.
 - `Spawn Location`: The starting location of the enemy. When the enemy respawns, it will spawn from this location.
 
@@ -48,4 +50,4 @@ This enemy, pictured earlier, is the most basic enemy. It does not move at all, 
 
 #### Flying Enemy
 ![Flying Enemy Prefab](images/FlyingEnemy_Prefab.png)
-- Similar to the Patrol Enemy, but this enemy has `Can Fly` toggled. This enemy moves up and down along side to side in the air. Like Patrol Enemy, the side to side movement can be toggled to occur more frequently. 
+- Similar to the Patrol Enemy, but this enemy has `Can Fly` toggled. This enemy moves up and down along side to side in the air. Like Patrol Enemy, the side to side movement can be toggled to occur more frequently.
