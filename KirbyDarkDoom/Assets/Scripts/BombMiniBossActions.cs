@@ -31,7 +31,6 @@ public class BombMiniBossActions : BaseEnemy {
     private EnemyStates currentState;       // The current state of the miniboss, which determines its specific actions
     private bool hasActivatedCooldown;
     private bool isMovingForward;
-    private float origSpeed;
     private GameObject spawnedBombInstance;
 
     public EnemyStates CurrentState {
@@ -140,12 +139,6 @@ public class BombMiniBossActions : BaseEnemy {
         dashTime = Mathf.Clamp(dashTime, 0, 100);
         jumpHeightTime = Mathf.Clamp(jumpHeightTime, 0, 100);
         cooldownTime =  Mathf.Clamp(cooldownTime, 0, 100);
-	}
-
-	// Saves the initial speef of the player
-	private void Awake()
-	{
-        origSpeed = moveSpeed;
 	}
 
     // Initializes the behavior of the enemy for the entire lifespan
