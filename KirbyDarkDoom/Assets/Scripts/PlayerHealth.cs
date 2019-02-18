@@ -55,8 +55,8 @@ public class PlayerHealth : BaseHealth
             base.Respawn();
 
             // We respawn all of the enemies and blocks
-            GameManager.Instance.RespawnAllEnemies();
-            GameManager.Instance.RestoreAllBlocks();
+            GameManager.Instance.RespawnAssociatedEnemies();
+            GameManager.Instance.RespawnAssociatedBlocks();
 
             // we then the player's variables back to normal
             // This is done so that the player is in front of everything

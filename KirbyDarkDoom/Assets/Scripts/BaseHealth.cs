@@ -34,7 +34,7 @@ public abstract class BaseHealth : MonoBehaviour {
 	}
 
 	// Sets up the current health to be equal to the max health
-	private void Start()
+	private void Awake()
 	{
         currentHealth = maxHealth;
         spawnLocation = gameObject.transform.position;

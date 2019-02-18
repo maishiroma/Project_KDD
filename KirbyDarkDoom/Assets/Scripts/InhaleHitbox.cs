@@ -92,8 +92,15 @@ public class InhaleHitbox : MonoBehaviour {
         }
 	}
 
-    // Checks if the given object is something the player can inhale
-    private bool CheckIfInhalable(GameObject inhaledObject)
+    // Makes sure the Inhalled reference is gone when it leaves the hitbox
+	private void OnTriggerExit2D(Collider2D collision)
+	{
+        rbToInhale = null;
+        isInhalingObject = false;
+	}
+
+	// Checks if the given object is something the player can inhale
+	private bool CheckIfInhalable(GameObject inhaledObject)
     {
         if(inhaledObject.GetComponent<BaseHealth>() != null)
         {

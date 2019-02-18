@@ -18,11 +18,15 @@ public class DoorActions : MonoBehaviour {
     [Range(0.01f, 1f)]
     public float lerpValue = 0.1f;
 
-    [Header("Camera Modifiers")]
+    [Header("New Camera Modifiers")]
     public float cameraMinX;
     public float cameraMaxX;
     public float cameraMinY;
     public float cameraMaxY;
+
+    [Header("Next Area References")]    // NOTE: These must be GameObjects that contain only the given GameObjects
+    public GameObject nextAreaEnemies;
+    public GameObject nextAreaBlocks;
 
 	[Header("Outside References")]
     public CameraController mainCamera;
@@ -88,11 +92,10 @@ public class DoorActions : MonoBehaviour {
         // Else, we proceed to the normal transition
         else
         {
-            // We then teleport the player, change their respawn point and reset all of the enemies to their initial locations
+            // We then teleport the player, change their respawn point
             playerRB.position = travelSpot.position;
             playerHealth.spawnLocation = travelSpot.position;
             playerController.ResetPlayerMovement(makePlayerFaceRight);
-            GameManager.Instance.RespawnAllEnemies();
             yield return new WaitForFixedUpdate();
 
             // We set the camera to have new bounds so that it will properly show the player
@@ -100,6 +103,17 @@ public class DoorActions : MonoBehaviour {
             mainCamera.maxXPos = cameraMaxX;
             mainCamera.minYPos = cameraMinY;
             mainCamera.maxYPos = cameraMaxY;
+            yield return new WaitForFixedUpdate();
+
+            // We despawn all of the previous area's enemies and blocks
+            GameManager.Instance.DefeatAssociatedEnemies();
+            GameManager.Instance.DefeatAssociaedBlocks();
+            yield return new WaitForFixedUpdate();
+
+            // And spawn the new area's enemies and blocks
+            GameManager.Instance.AssociateNewEnemyAndBlocks(nextAreaEnemies, nextAreaBlocks);
+            GameManager.Instance.RespawnAssociatedEnemies();
+            GameManager.Instance.RespawnAssociatedBlocks();
             yield return new WaitForFixedUpdate();
 
             // Then we enable the player to move and start fading back in
