@@ -185,8 +185,8 @@ public class PlayerController : MonoBehaviour {
                 InhaleExhaleAction();
             }
 
-            // If the player is not in the air, they can duck
-            if(isInAir == false)
+            // If the player is not in the air and already inhaling, they can duck
+            if(isInAir == false && isInhaling == false)
             {
                 Ducking();
             }
