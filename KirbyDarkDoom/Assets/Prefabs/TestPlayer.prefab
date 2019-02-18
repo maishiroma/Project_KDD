@@ -292,7 +292,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.5, y: 1}
+  m_Size: {x: 1.5, y: 0.7}
   m_EdgeRadius: 0
 --- !u!114 &114161035838840856
 MonoBehaviour:
@@ -401,6 +401,7 @@ MonoBehaviour:
   maxHealth: 100
   isInvincible: 0
   invincibilityTime: 2
+  canBeInhaled: 1
   spawnLocation: {x: 0, y: 0}
   entitySpriteRender: {fileID: 212156262353481102}
   numbOfLives: 3

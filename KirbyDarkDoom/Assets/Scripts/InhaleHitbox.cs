@@ -17,8 +17,19 @@ public class InhaleHitbox : MonoBehaviour {
     public PlayerController playerController;
 
     //Private Variables
-    private Rigidbody2D rbToInhale;
+    private GameObject objectToInhale;
     private bool isInhalingObject;
+
+    public bool IsInhalingObject {
+        get {return isInhalingObject;}
+    }
+
+    // When the hitbox is gone, we reset the hitbox back to its default settings
+	private void OnDisable()
+	{
+        objectToInhale = null;
+        isInhalingObject = false;
+	}
 
 	// If a vaild object is in the inhale range, they will start to be dragged toward the player
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -26,29 +37,26 @@ public class InhaleHitbox : MonoBehaviour {
         if(CheckIfInhalable(collision.gameObject) == true && isInhalingObject == false)
         {
             isInhalingObject = true;
-            if(collision.gameObject.GetComponent<Rigidbody2D>() != null)
-            {
-                rbToInhale = collision.gameObject.GetComponent<Rigidbody2D>();
-            }
+            objectToInhale = collision.gameObject;
         }
 	}
 
     // Pulls the object toward the player
 	private void OnTriggerStay2D(Collider2D collision)
 	{
-        if(CheckIfInhalable(collision.gameObject) == true && isInhalingObject == true)
+        if(ReferenceEquals(objectToInhale, collision.gameObject) && isInhalingObject == true)
         {
             Vector2 newPos;
 
             // Calculates the position that the object will be pulled in
             // Depending on whether or not the object has a RB, we determine how we check its position
-            if(rbToInhale != null)
+            if(objectToInhale.GetComponent<Rigidbody2D>() != null)
             {
-                newPos = Vector2.MoveTowards(rbToInhale.position, playerRB.position, inhalePower);
+                newPos = Vector2.MoveTowards(objectToInhale.GetComponent<Rigidbody2D>().position, playerRB.position, inhalePower);
             }
             else
             {
-                newPos = Vector2.MoveTowards(collision.transform.position, playerRB.position, inhalePower);
+                newPos = Vector2.MoveTowards(objectToInhale.transform.position, playerRB.position, inhalePower);
             }
 
             // If the object is close to the player while they are being inhaled, they will make the player stuffed
@@ -61,43 +69,43 @@ public class InhaleHitbox : MonoBehaviour {
 
             if(Physics2D.Raycast(playerRB.position, Vector2.right * sign, 1f, layerMasks))
             {
-                if(collision.gameObject.tag == "Collectible")
+                if(objectToInhale.tag == "Collectible")
                 {
                     // If the player inhales a collectible, they will collect it.
-                    collision.gameObject.GetComponent<Collectible>().CollectCollectible(playerController.playerHealth);
+                    objectToInhale.GetComponent<Collectible>().CollectCollectible(playerController.playerHealth);
                 }
                 else
                 {
                     playerController.playerGraphics.ChangeSprite("isStuffed");
                     playerController.isStuffed = true;
-                    collision.gameObject.SetActive(false);
+                    objectToInhale.SetActive(false);
                 }
 
                 playerController.isInhaling = false;
                 gameObject.SetActive(false);
-                rbToInhale = null;
+                objectToInhale = null;
                 isInhalingObject = false;
             }
             else
             {
-                if(rbToInhale != null)
+                if(objectToInhale.GetComponent<Rigidbody2D>() != null)
                 {
-                    rbToInhale.MovePosition(newPos);
+                    objectToInhale.GetComponent<Rigidbody2D>().MovePosition(newPos);
                 }
                 else
                 {
-                    collision.transform.position = newPos;
+                    objectToInhale.transform.position = newPos;
                 }
             }
         }
 	}
 
     // Makes sure the Inhalled reference is gone when it leaves the hitbox
-	private void OnTriggerExit2D(Collider2D collision)
-	{
-        rbToInhale = null;
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        objectToInhale = null;
         isInhalingObject = false;
-	}
+    }
 
 	// Checks if the given object is something the player can inhale
 	private bool CheckIfInhalable(GameObject inhaledObject)
