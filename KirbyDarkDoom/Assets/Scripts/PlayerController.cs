@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour {
     public Transform[] groundCheckers = new Transform[3];
 
     // Private variables
+    private InhaleHitbox inhaleActions;
     private Vector2 origVelocity = Vector2.zero;
     private float origGravity = 0f;
     private float horizInput = 0f;
@@ -147,9 +148,10 @@ public class PlayerController : MonoBehaviour {
         playerRB.isKinematic = false;
     }
 
-    // Saves some of the private variables using the passed in GameObjects
-    private void Start()
+	// Saves some of the private variables using the passed in GameObjects
+	private void Start()
     {
+        inhaleActions = inhaleHitboxChild.GetComponent<InhaleHitbox>();
         inhaleHitboxXPos = inhaleHitboxChild.transform.localPosition.x;
         slideHitboxXPos = slideHitboxChild.transform.localPosition.x;
         origPlayerHeight = playerCollider.size.y;
@@ -561,7 +563,7 @@ public class PlayerController : MonoBehaviour {
         else
         {
             // Stop inhaling
-            if(isInhaling == true)
+            if(isInhaling == true && inhaleActions.IsInhalingObject == false)
             {
                 playerGraphics.ChangeSprite("isIdle");
                 inhaleHitboxChild.SetActive(false);
