@@ -23,7 +23,6 @@ public class SelfDestroy : MonoBehaviour {
     [Header("Outside References")]
     public BaseHealth objectHealth;
     public BoxCollider2D hitboxRef;
-    public Rigidbody2D objectRB;
     public SpriteRenderer objectSprite;
 
     // Reconfirmes the variables being valid timers
@@ -62,15 +61,20 @@ public class SelfDestroy : MonoBehaviour {
 
         if(canExplode == true)
         {
+            if(gameObject.GetComponent<BaseEnemy>() != null)
+            {
+                gameObject.GetComponent<BaseEnemy>().StopEnemy();
+            }
+
             // If we can create a hitbox, we set it active here
             objectSprite.sprite = explosionSprite;
-            hitboxRef.isTrigger = true;
             hitboxRef.size = new Vector2(hitboxXSize, hitboxYSize);
-            objectRB.isKinematic = true;
+            hitboxRef.isTrigger = true;
             objectHealth.canBeInhaled = false;
             yield return new WaitForSeconds(hitboxTimer);
         }
 
+        // We then disable to gameobject to be destroyed
         gameObject.SetActive(false);
         yield return null;
     }

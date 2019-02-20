@@ -34,7 +34,14 @@ public class MiniBossHealth : BaseHealth
         bossHealthBar_UI.value = CurrentHealth;
 	}
 
-    // Once the boss is dead, it will stop moving. After X seconds it will then explode.
+    // Does the same behavior, except it resets the boss's positioning and behavior
+	public override void Respawn()
+	{
+        base.Respawn();
+        enemyActions.ResetBehavior();
+	}
+
+	// Once the boss is dead, it will stop moving. After X seconds it will then explode.
 	public override void DyingAction()
     {
         if(!IsInvoking("Dissapear"))

@@ -109,6 +109,26 @@ public class BombMiniBossActions : BaseEnemy {
         }
     }
 
+    // When called, this resets all of the variables for the boss
+    public void ResetBehavior()
+    {
+        CurrentState = EnemyStates.IDLE;
+        enemyRB.velocity = Vector2.zero;
+        hasActivatedCooldown = false;
+        isMovingForward = false;
+
+        if(spawnedBombInstance != null)
+        {
+            Destroy(spawnedBombInstance);
+        }
+        spawnedBombInstance = null;
+
+        if(startFacingLeft == true && IsFacingRight == true)
+        {
+            TurnAround();
+        }
+    }
+
     // When starting up, we reset all of the enemy statuses
     private void OnEnable()
     {
@@ -215,6 +235,7 @@ public class BombMiniBossActions : BaseEnemy {
         spawnedBombInstance.GetComponent<Rigidbody2D>().isKinematic = false;
         spawnedBombInstance.GetComponent<BoxCollider2D>().isTrigger = false;
         spawnedBombInstance.GetComponent<PatrolEnemy>().moveSpeed = bombThrowSpeed;
+        spawnedBombInstance.transform.parent = null;
         yield return new WaitForFixedUpdate();
 
         // We enter cooldown
