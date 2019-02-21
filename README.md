@@ -15,6 +15,12 @@ The driving factor behind this prototype is to achevie the following:
 ## What's in here?
 This project will consist of a short prototype level that will demonstrate all of the mechanics, UI, and fludidity that I worked on. A complete playthrough of the prototype will take less than 3 minutes. 
 
+## How to Build and Run
+There are two ways on building this project:
+1) Download the most recent release found in the `Release Tab` and extract the `.zip`.
+  > NOTE: This currently only has the Mac release. In order to play this on Windows, you will need to do the second way of building the project.
+2) Clone the repo from the `master` branch and build the project within Unity _v2018.2.4_.
+
 ## Basic Controls
 - `A`: Move Left
 - `D`: Move Right
